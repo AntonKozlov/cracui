@@ -54,6 +54,8 @@
 #include <dlfcn.h>
 #include "Trace.h"
 
+#include <pthread.h>
+
 #ifndef HEADLESS
 
 int awt_numScreens;     /* Xinerama-aware number of screens */
@@ -72,7 +74,14 @@ static jboolean glxRequested = JNI_FALSE;
 #define Display void
 #endif /* HEADLESS */
 
-Display *awt_display;
+Display *awt_display_storage;
+pthread_mutex_t lock;
+
+Display *get_awt_display(void) {
+    pthread_mutex_lock(&lock);
+    pthread_mutex_unlock(&lock);
+    return awt_display_storage;
+}
 
 jclass tkClass = NULL;
 jmethodID awtLockMID = NULL;
@@ -296,7 +305,7 @@ makeDefaultConfig(JNIEnv *env, int screen) {
     /* we tried everything, give up */
     JNU_ThrowInternalError(env, "Can't find supported visual");
     XCloseDisplay(awt_display);
-    awt_display = NULL;
+    awt_display_storage = NULL;
     return NULL;
 }
 
@@ -682,6 +691,8 @@ awt_init_Display(JNIEnv *env, jobject this)
         return awt_display;
     }
 
+    pthread_mutex_init(&lock, NULL);
+
     /* Load AWT lock-related methods in SunToolkit */
     klass = (*env)->FindClass(env, "sun/awt/SunToolkit");
     if (klass == NULL) return NULL;
@@ -700,7 +711,7 @@ awt_init_Display(JNIEnv *env, jobject this)
         }
     }
 
-    dpy = awt_display = XOpenDisplay(NULL);
+    dpy = awt_display_storage = XOpenDisplay(NULL);
     if (!dpy) {
         jio_snprintf(errmsg,
                      sizeof(errmsg),
@@ -804,6 +815,20 @@ Java_sun_awt_X11GraphicsEnvironment_initDisplay(JNIEnv *env, jobject this,
     glxRequested = glxReq;
     (void) awt_init_Display(env, this);
 #endif /* !HEADLESS */
+}
+
+JNIEXPORT void JNICALL
+Java_sun_awt_X11GraphicsEnvironment_beforeCheckpoint0(JNIEnv *env, jclass this)
+{
+    pthread_mutex_lock(&lock);
+	XCloseDisplay(awt_display_storage);
+}
+
+JNIEXPORT void JNICALL
+Java_sun_awt_X11GraphicsEnvironment_afterRestore0(JNIEnv *env, jclass this)
+{
+    awt_display_storage = XOpenDisplay(NULL);
+    pthread_mutex_unlock(&lock);
 }
 
 /*

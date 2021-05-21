@@ -59,6 +59,7 @@ JNIEXPORT jint JNICALL
 Java_sun_nio_ch_EPoll_create(JNIEnv *env, jclass clazz) {
     /* size hint not used in modern kernels */
     int epfd = epoll_create(256);
+    fprintf(stderr, "epfd %d\n", epfd);
     if (epfd < 0) {
         JNU_ThrowIOExceptionWithLastError(env, "epoll_create failed");
     }

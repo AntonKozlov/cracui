@@ -33,9 +33,10 @@ import java.net.SocketException;
 import java.net.UnknownHostException;
 import java.util.Enumeration;
 
-import sun.java2d.SunGraphicsEnvironment;
-import sun.java2d.SurfaceManagerFactory;
-import sun.java2d.UnixSurfaceManagerFactory;
+import jdk.crac.Context;
+import jdk.crac.Resource;
+import jdk.internal.crac.JDKResource;
+import sun.java2d.*;
 import sun.java2d.xr.XRSurfaceData;
 import sun.util.logging.PlatformLogger;
 
@@ -53,6 +54,58 @@ public final class X11GraphicsEnvironment extends SunGraphicsEnvironment {
     private static final PlatformLogger screenLog = PlatformLogger.getLogger("sun.awt.screen.X11GraphicsEnvironment");
 
     private static Boolean xinerState;
+
+    static JDKResource jdkResource = new JDKResource() {
+        @Override
+        public int getPriority() {
+            return 0;
+        }
+
+        final Object[] lock = { new Object(), new Object() };
+        final int[] cnt = { 0, 0 };
+
+        @Override
+        public void beforeCheckpoint(Context<? extends Resource> context) throws Exception {
+            beforeCheckpoint0();
+/*
+            Disposer.addObjectRecord(new Object(), new DisposerRecord() {
+                @Override
+                public void dispose() {
+                    beforeCheckpoint0();
+                    synchronized (lock[0]) {
+                        cnt[0] = 1;
+                        lock[0].notify();
+                    }
+                    synchronized (lock[1]) {
+                        while (cnt[1] == 0) {
+                            try {
+                                lock[1].wait();
+                            } catch (InterruptedException ignore) {
+                            }
+                        }
+                    }
+                }
+            });
+            synchronized (lock[0]) {
+                while (cnt[0] == 0) {
+                    System.gc();
+                    lock[0].wait(10);
+                }
+            }
+*/
+        }
+
+        @Override
+        public void afterRestore(Context<? extends Resource> context) throws Exception {
+            afterRestore0();
+/*
+            synchronized (lock[1]) {
+                ++cnt[1];
+                lock[1].notify();
+            }
+*/
+        }
+    };
 
     static {
         java.security.AccessController.doPrivileged(
@@ -129,6 +182,7 @@ public final class X11GraphicsEnvironment extends SunGraphicsEnvironment {
         // Install the correct surface manager factory.
         SurfaceManagerFactory.setInstance(new UnixSurfaceManagerFactory());
 
+        jdk.internal.crac.Core.getJDKContext().register(jdkResource);
     }
 
 
@@ -174,6 +228,9 @@ public final class X11GraphicsEnvironment extends SunGraphicsEnvironment {
      * the synchronized keyword.
      */
     private static native void initDisplay(boolean glxRequested);
+
+    private static native void beforeCheckpoint0();
+    private static native void afterRestore0();
 
     public X11GraphicsEnvironment() {
     }

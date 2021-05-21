@@ -213,7 +213,7 @@ double getNativeScaleFactor(char *output_name) {
         return scale;
     }
 
-    native_scale = getDesktopScale(output_name);
+    native_scale = -1; // getDesktopScale(output_name);
 
     if (native_scale <= 0) {
         native_scale = 1;

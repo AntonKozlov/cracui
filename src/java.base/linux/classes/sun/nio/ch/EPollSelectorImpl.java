@@ -384,7 +384,7 @@ class EPollSelectorImpl extends SelectorImpl implements JDKResource {
                 }
             }
             if (checkpointState == CheckpointRestoreState.CHECKPOINT_ERROR) {
-                throw new IllegalSelectorException();
+                //throw new IllegalSelectorException();
             }
         }
     }
