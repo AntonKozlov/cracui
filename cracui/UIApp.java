@@ -14,7 +14,7 @@ public class UIApp {
 		});
 
 		Thread.sleep(sleep1);
-		System.out.println("done1");
+		System.out.println("Window created");
 
 		SwingUtilities.invokeAndWait(() -> {
 			try {
@@ -25,13 +25,12 @@ public class UIApp {
 		});
 
 		Thread.sleep(sleep2);
-		System.out.println("done1");
+		System.out.println("Checkpoint restored");
 
 		SwingUtilities.invokeAndWait(() -> {
 			if (snd) {
 				(new JFrame("test")).setVisible(true);
 			}
 		});
-
 	}
 }
