@@ -13,9 +13,10 @@ public class UIApp {
 			}
 		});
 
-		Thread.sleep(sleep1);
 		System.out.println("Window created");
+		Thread.sleep(sleep1);
 
+		System.out.println("Try to make a checkpoint and then restore...");
 		SwingUtilities.invokeAndWait(() -> {
 			try {
 				jdk.crac.Core.checkpointRestore();
@@ -24,8 +25,8 @@ public class UIApp {
 			}
 		});
 
-		Thread.sleep(sleep2);
 		System.out.println("Checkpoint restored");
+		Thread.sleep(sleep2);
 
 		SwingUtilities.invokeAndWait(() -> {
 			if (snd) {
