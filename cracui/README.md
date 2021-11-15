@@ -47,3 +47,21 @@ LD_LIBRARY_PATH=[/path/to/library]/libX11/src/.libs ./jdk/bin/java -XX:+UnlockDi
 ```
 LD_LIBRARY_PATH=[/path/to/library]/libX11/src/.libs DISPLAY=:1 gdb -args ./jdk/bin/java -XX:+UnlockDiagnosticVMOptions -XX:+CRAllowToSkipCheckpoint -XX:CRaCCheckpointTo=./checkpoints -Djdk.crac.debug=true ./cracui/UIApp.java 1000 1000 1 1
 ```
+
+Скрыть лишние исключения поможет:
+
+```
+(gdb) handle SIGSEGV noprint nostop
+```
+
+Установка breakpoint:
+
+```
+(gdb) b FreeGC.c:47
+```
+
+Запуск:
+
+```
+(gdb) run
+```
