@@ -41,8 +41,14 @@ DISPLAY=:1 ./jdk/bin/java -XX:+UnlockDiagnosticVMOptions -XX:+CRAllowToSkipCheck
 LD_LIBRARY_PATH=[/path/to/library]/libX11/src/.libs ./jdk/bin/java -XX:+UnlockDiagnosticVMOptions -XX:+CRAllowToSkipCheckpoint -XX:CRaCCheckpointTo=./checkpoints -Djdk.crac.debug=true ./cracui/UIApp.java 1000 1000 1 1
 ```
 
-Для непосредственной отладки можно использовать простой и эффективный **GDB**.
-Для его запуска совместно с **xscope** и отладочной версией **Xlib** можно попробовать:
+Чтобы убедиться, что слинковались нужные библиотеки, можно воспользоваться отладкой LD через переменную окружения:
+
+```
+LD_DEBUG=libs
+```
+
+Для непосредственной отладки можно использовать простой и эффективный **GDB**. Для его запуска совместно с **xscope** и
+отладочной версией **Xlib** можно попробовать:
 
 ```
 LD_LIBRARY_PATH=[/path/to/library]/libX11/src/.libs DISPLAY=:1 gdb -args ./jdk/bin/java -XX:+UnlockDiagnosticVMOptions -XX:+CRAllowToSkipCheckpoint -XX:CRaCCheckpointTo=./checkpoints -Djdk.crac.debug=true ./cracui/UIApp.java 1000 1000 1 1
