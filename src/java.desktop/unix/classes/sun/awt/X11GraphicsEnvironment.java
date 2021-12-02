@@ -40,6 +40,8 @@ import sun.java2d.*;
 import sun.java2d.xr.XRSurfaceData;
 import sun.util.logging.PlatformLogger;
 
+import java.lang.ref.ReferenceQueueBubble;
+
 /**
  * This is an implementation of a GraphicsEnvironment object for the
  * default local GraphicsEnvironment used by the Java Runtime Environment
@@ -62,48 +64,88 @@ public final class X11GraphicsEnvironment extends SunGraphicsEnvironment {
         }
 
         final Object[] lock = { new Object(), new Object() };
-        final int[] cnt = { 0, 0 };
+//        final int[] cnt = { 0, 0 };
 
         @Override
         public void beforeCheckpoint(Context<? extends Resource> context) throws Exception {
             beforeCheckpoint0();
-/*
-            Disposer.addObjectRecord(new Object(), new DisposerRecord() {
+
+            var obj = new ReferenceQueueBubble();
+            var rec = new DisposerRecord() {
                 @Override
                 public void dispose() {
-                    beforeCheckpoint0();
-                    synchronized (lock[0]) {
-                        cnt[0] = 1;
-                        lock[0].notify();
-                    }
                     synchronized (lock[1]) {
-                        while (cnt[1] == 0) {
-                            try {
-                                lock[1].wait();
-                            } catch (InterruptedException ignore) {
-                            }
+                        synchronized (lock[0]) {
+                            lock[0].notify();
+                        }
+
+                        try {
+                            lock[1].wait();
+                        } catch (InterruptedException ignore) {
                         }
                     }
                 }
-            });
-            synchronized (lock[0]) {
-                while (cnt[0] == 0) {
+            };
+
+            synchronized (lock[0])
+            {
+                Disposer.addObjectRecord(obj, rec);
+
+                while (true)
+                {
                     System.gc();
-                    lock[0].wait(10);
+                    try {
+                        lock[0].wait();
+                    } catch (InterruptedException ignore) {
+                    }
+
+                    synchronized (lock[1]) {
+                        if (Disposer.getQueue().checkQueueLength(0)) {
+                            lock[1].notify();
+                            break;
+                        } else {
+                            Disposer.addObjectRecord(obj, rec);
+                            lock[1].notify();
+                        }
+                    }
                 }
             }
-*/
+
+//            var obj = new Object();
+//            Disposer.addObjectRecord(obj, new DisposerRecord() {
+//                @Override
+//                public void dispose() {
+//                    beforeCheckpoint0();
+//                    synchronized (lock[0]) {
+//                        cnt[0] = 1;
+//                        lock[0].notify();
+//                    }
+//                    synchronized (lock[1]) {
+//                        while (cnt[1] == 0) {
+//                            try {
+//                                lock[1].wait();
+//                            } catch (InterruptedException ignore) {
+//                            }
+//                        }
+//                    }
+//                }
+//            });
+//            synchronized (lock[0]) {
+//                while (cnt[0] == 0) {
+//                    System.gc();
+//                    lock[0].wait(10);
+//                }
+//            }
         }
 
         @Override
         public void afterRestore(Context<? extends Resource> context) throws Exception {
             afterRestore0();
-/*
-            synchronized (lock[1]) {
-                ++cnt[1];
-                lock[1].notify();
-            }
-*/
+
+//            synchronized (lock[1]) {
+//                ++cnt[1];
+//                lock[1].notify();
+//            }
         }
     };
 

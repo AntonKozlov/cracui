@@ -30,6 +30,9 @@ import jdk.internal.HotSpotIntrinsicCandidate;
 import jdk.internal.access.JavaLangRefAccess;
 import jdk.internal.access.SharedSecrets;
 import jdk.internal.ref.Cleaner;
+import java.lang.ref.Cleaner.Cleanable;
+
+import java.lang.ref.ReferenceQueueBubble;
 
 /**
  * Abstract base class for reference objects.  This class defines the
@@ -250,7 +253,17 @@ public abstract class Reference<T> {
             ref.discovered = null;
 
             if (ref instanceof Cleaner) {
-                ((Cleaner)ref).clean();
+                ((Cleaner) ref).clean();
+                // Notify any waiters that progress has been made.
+                // This improves latency for nio.Bits waiters, which
+                // are the only important ones.
+                synchronized (processPendingLock) {
+                    processPendingLock.notifyAll();
+                }
+            // Add this condition, because there are Cleanable
+            // refs and upper one doesn't true (need to check)
+            } else if (ref instanceof Cleanable) {
+                ((Cleanable) ref).clean();
                 // Notify any waiters that progress has been made.
                 // This improves latency for nio.Bits waiters, which
                 // are the only important ones.
@@ -259,7 +272,10 @@ public abstract class Reference<T> {
                 }
             } else {
                 ReferenceQueue<? super Object> q = ref.queue;
-                if (q != ReferenceQueue.NULL) q.enqueue(ref);
+                if (q != ReferenceQueue.NULL && ref.get() instanceof ReferenceQueueBubble)
+                    q.enqueueTail(ref);
+                if (q != ReferenceQueue.NULL)
+                    q.enqueue(ref);
             }
         }
         // Notify any waiters of completion of current round.

@@ -57,6 +57,47 @@ public class ReferenceQueue<T> {
     private volatile Reference<? extends T> head;
     private long queueLength = 0;
 
+    /**
+     * @param length long
+     * @return boolean
+     */
+    public boolean checkQueueLength(long length) {
+        synchronized (lock)
+        {
+            return length == queueLength;
+        }
+    }
+
+    /**
+     * @param r Reference
+     * @return boolean
+     */
+    boolean enqueueTail(Reference<? extends T> r) { /* Called only by X11Environment class */
+        synchronized (lock) {
+            // Check that since getting the lock this reference hasn't already been
+            // enqueued (and even then removed)
+            ReferenceQueue<?> queue = r.queue;
+            if ((queue == NULL) || (queue == ENQUEUED)) {
+                return false;
+            }
+            assert queue == this;
+            // Self-loop end, so if a FinalReference it remains inactive.
+            r.next = r;
+            // Search for queue end and change it's next ref
+            queue.forEach(q -> { if (q.next == q) q.next = r; });
+            queueLength++;
+            // Update r.queue *after* adding to list, to avoid race
+            // with concurrent enqueued checks and fast-path poll().
+            // Volatiles ensure ordering.
+            r.queue = ENQUEUED;
+            if (r instanceof FinalReference) {
+                VM.addFinalRefCount(1);
+            }
+            lock.notifyAll();
+            return true;
+        }
+    }
+
     boolean enqueue(Reference<? extends T> r) { /* Called only by Reference class */
         synchronized (lock) {
             // Check that since getting the lock this reference hasn't already been
