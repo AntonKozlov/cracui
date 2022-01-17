@@ -68,7 +68,7 @@ public final class X11GraphicsEnvironment extends SunGraphicsEnvironment {
 
         @Override
         public void beforeCheckpoint(Context<? extends Resource> context) throws Exception {
-            beforeCheckpoint0();
+//            beforeCheckpoint0();
 
             var obj = new ReferenceQueueBubble();
             var rec = new DisposerRecord() {
@@ -76,6 +76,7 @@ public final class X11GraphicsEnvironment extends SunGraphicsEnvironment {
                 public void dispose() {
                     synchronized (lock[1]) {
                         synchronized (lock[0]) {
+                            beforeCheckpoint0();
                             lock[0].notify();
                         }
 
