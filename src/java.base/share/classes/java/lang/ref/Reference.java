@@ -244,6 +244,7 @@ public abstract class Reference<T> {
             pendingList = getAndClearReferencePendingList();
             processPendingActive = true;
         }
+
         while (pendingList != null) {
             Reference<Object> ref = pendingList;
             pendingList = ref.discovered;
