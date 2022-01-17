@@ -52,10 +52,19 @@ public class ReferenceQueue<T> {
     static final ReferenceQueue<Object> NULL = new Null();
     static final ReferenceQueue<Object> ENQUEUED = new Null();
 
-    private static class Lock { };
-    private final Lock lock = new Lock();
+    /**
+     * Class for lock objects.
+     */
+    protected static class Lock { };
+    /**
+     * Lock object.
+     */
+    protected final Lock lock = new Lock();
     private volatile Reference<? extends T> head;
-    private long queueLength = 0;
+    /**
+     * Stores actual queue length. Must hold lock for update.
+     */
+    protected long queueLength = 0;
 
     boolean enqueue(Reference<? extends T> r) { /* Called only by Reference class */
         synchronized (lock) {

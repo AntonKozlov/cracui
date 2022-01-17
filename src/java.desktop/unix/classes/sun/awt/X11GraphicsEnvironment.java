@@ -61,49 +61,14 @@ public final class X11GraphicsEnvironment extends SunGraphicsEnvironment {
             return 0;
         }
 
-        final Object[] lock = { new Object(), new Object() };
-        final int[] cnt = { 0, 0 };
-
         @Override
         public void beforeCheckpoint(Context<? extends Resource> context) throws Exception {
             beforeCheckpoint0();
-/*
-            Disposer.addObjectRecord(new Object(), new DisposerRecord() {
-                @Override
-                public void dispose() {
-                    beforeCheckpoint0();
-                    synchronized (lock[0]) {
-                        cnt[0] = 1;
-                        lock[0].notify();
-                    }
-                    synchronized (lock[1]) {
-                        while (cnt[1] == 0) {
-                            try {
-                                lock[1].wait();
-                            } catch (InterruptedException ignore) {
-                            }
-                        }
-                    }
-                }
-            });
-            synchronized (lock[0]) {
-                while (cnt[0] == 0) {
-                    System.gc();
-                    lock[0].wait(10);
-                }
-            }
-*/
         }
 
         @Override
         public void afterRestore(Context<? extends Resource> context) throws Exception {
             afterRestore0();
-/*
-            synchronized (lock[1]) {
-                ++cnt[1];
-                lock[1].notify();
-            }
-*/
         }
     };
 
