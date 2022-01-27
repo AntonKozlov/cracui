@@ -53,7 +53,11 @@ public interface JDKResource extends Resource {
          * Priority of the
          * sun.nio.ch.EPollSelectorImpl resource
          */
-        EPOLLSELECTOR
+        EPOLLSELECTOR,
+
+        REFERENCE_HANDLER,
+
+        CLEANER,
     };
 
     Priority getPriority();
