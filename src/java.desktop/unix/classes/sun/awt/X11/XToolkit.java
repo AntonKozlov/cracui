@@ -229,7 +229,7 @@ public final class XToolkit extends UNIXToolkit implements Runnable {
     static final JDKResource jdkResource = (new JDKResource() {
         @Override
         public int getPriority() {
-            return 2;
+            return 3;
         }
 
         @Override

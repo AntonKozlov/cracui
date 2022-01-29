@@ -48,6 +48,7 @@ import sun.util.logging.PlatformLogger;
  * @see GraphicsDevice
  * @see java.awt.GraphicsConfiguration
  */
+
 public final class X11GraphicsEnvironment extends SunGraphicsEnvironment {
 
     private static final PlatformLogger log = PlatformLogger.getLogger("sun.awt.X11GraphicsEnvironment");
