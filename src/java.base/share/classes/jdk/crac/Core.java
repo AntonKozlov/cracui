@@ -103,6 +103,7 @@ public class Core {
             CheckpointException,
             RestoreException {
         try {
+            System.out.println("[" + Thread.currentThread().getName() + "] " + "BeforeCheckpoint!");
             globalContext.beforeCheckpoint(null);
         } catch (CheckpointException ce) {
             // TODO make dry-run
@@ -121,6 +122,7 @@ public class Core {
             throw ce;
         }
 
+        System.out.println("[" + Thread.currentThread().getName() + "] " + "Native checkpointRestore0()");
         final Object[] bundle = checkpointRestore0();
         final int retCode = (Integer)bundle[0];
         final int[] codes = (int[])bundle[1];
@@ -146,6 +148,7 @@ public class Core {
             }
 
             try {
+                System.out.println("[" + Thread.currentThread().getName() + "] " + "AfterRestore!");
                 globalContext.afterRestore(null);
             } catch (RestoreException re) {
                 for (Throwable t : re.getSuppressed()) {

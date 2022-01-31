@@ -27,7 +27,7 @@ package sun.java2d;
 
 import sun.awt.util.ThreadGroupUtils;
 
-import sun.java2d.DisposerQueue;
+import java.lang.ref.ReferenceQueue;
 import java.lang.ref.Reference;
 import java.lang.ref.PhantomReference;
 import java.lang.ref.WeakReference;
@@ -50,8 +50,9 @@ import java.util.Hashtable;
  *
  * @see DisposerRecord
  */
+
 public class Disposer implements Runnable {
-    private static final DisposerQueue queue = new DisposerQueue();
+    private static final ReferenceQueue<Object> queue = new ReferenceQueue<>();
     private static final Hashtable<java.lang.ref.Reference<Object>, DisposerRecord> records =
         new Hashtable<>();
 
@@ -141,7 +142,9 @@ public class Disposer implements Runnable {
     public void run() {
         while (true) {
             try {
+                System.out.println("[" + Thread.currentThread().getName() + "] " + "DisposerQueue length before remove: " + queue.queueLength);
                 Object obj = queue.remove();
+                System.out.println("[" + Thread.currentThread().getName() + "] " + "DisposerQueue length after remove: " + queue.queueLength);
                 ((Reference)obj).clear();
                 DisposerRecord rec = records.remove(obj);
                 rec.dispose();
@@ -252,7 +255,7 @@ public class Disposer implements Runnable {
 
     /* This is intended for use in conjunction with addReference(..)
      */
-    public static DisposerQueue getQueue() {
+    public static ReferenceQueue<Object> getQueue() {
         return queue;
     }
 

@@ -25,6 +25,9 @@
 
 package java.lang.ref;
 
+import jdk.crac.Context;
+import jdk.crac.Resource;
+import jdk.internal.crac.JDKResource;
 import jdk.internal.vm.annotation.ForceInline;
 import jdk.internal.HotSpotIntrinsicCandidate;
 import jdk.internal.access.JavaLangRefAccess;
@@ -233,6 +236,8 @@ public abstract class Reference<T> {
     private static final Object processPendingLock = new Object();
     private static boolean processPendingActive = false;
 
+    private static JDKResource referenceHandlerSyncer;
+
     private static void processPendingReferences() {
         // Only the singleton reference processing thread calls
         // waitForReferencePendingList() and getAndClearReferencePendingList().
@@ -317,6 +322,25 @@ public abstract class Reference<T> {
                 Finalizer.runFinalization();
             }
         });
+
+        referenceHandlerSyncer = new JDKResource() {
+            @Override
+            public int getPriority() {
+                return 4;
+            }
+
+            @Override
+            public void beforeCheckpoint(Context<? extends Resource> context) throws Exception {
+                System.gc();
+                while (waitForReferenceProcessing());
+            }
+
+            @Override
+            public void afterRestore(Context<? extends Resource> context) throws Exception {
+            }
+        };
+
+        jdk.internal.crac.Core.getJDKContext().register(referenceHandlerSyncer);
     }
 
     /* -- Referent accessor and setters -- */
