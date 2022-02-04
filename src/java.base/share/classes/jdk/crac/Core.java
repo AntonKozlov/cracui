@@ -28,8 +28,7 @@ import jdk.crac.impl.CheckpointOpenFileException;
 import jdk.crac.impl.CheckpointOpenResourceException;
 import jdk.crac.impl.CheckpointOpenSocketException;
 import jdk.crac.impl.OrderedContext;
-import java.security.AccessController;
-import java.security.PrivilegedAction;
+import sun.security.action.GetBooleanAction;
 
 /**
  * The coordination service.
@@ -46,19 +45,15 @@ public class Core {
 
     private static native Object[] checkpointRestore0();
 
-    private static boolean traceStartupTime;
+    private static class FlagsHolder {
+        public static final boolean TRACE_STARTUP_TIME =
+                GetBooleanAction.privilegedGetProperty("jdk.crac.trace-startup-time");
+    }
 
     private static final Context<Resource> globalContext = new OrderedContext();
     static {
         // force JDK context initialization
         jdk.internal.crac.Core.getJDKContext();
-
-        traceStartupTime = AccessController.doPrivileged(
-                new PrivilegedAction<Boolean>() {
-                    public Boolean run() {
-                        return Boolean.parseBoolean(
-                                System.getProperty("jdk.crac.trace-startup-time"));
-                    }});
     }
 
     /** This class is not instantiable. */
@@ -128,7 +123,7 @@ public class Core {
         final int[] codes = (int[])bundle[1];
         final String[] messages = (String[])bundle[2];
 
-        if (traceStartupTime) {
+        if (FlagsHolder.TRACE_STARTUP_TIME) {
             System.out.println("STARTUPTIME " + System.nanoTime() + " restore");
         }
 
@@ -179,7 +174,7 @@ public class Core {
         try {
             checkpointRestore1();
         } finally {
-            if (traceStartupTime) {
+            if (FlagsHolder.TRACE_STARTUP_TIME) {
                 System.out.println("STARTUPTIME " + System.nanoTime() + " restore-finish");
             }
         }
