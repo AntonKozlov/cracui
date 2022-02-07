@@ -59,7 +59,7 @@ public final class X11GraphicsEnvironment extends SunGraphicsEnvironment {
     static JDKResource jdkResource = new JDKResource() {
         @Override
         public int getPriority() {
-            return 0;
+            return -3;
         }
 
         @Override

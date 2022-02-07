@@ -326,7 +326,7 @@ public abstract class Reference<T> {
         referenceHandlerSyncer = new JDKResource() {
             @Override
             public int getPriority() {
-                return 4;
+                return -1;
             }
 
             @Override
