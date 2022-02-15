@@ -45,6 +45,7 @@ public interface JDKResource extends Resource {
      * in the direct order of registration.
      */
     enum Priority {
+        X11GE,
         /**
          * Most resources should use this option.
          */
@@ -58,7 +59,11 @@ public interface JDKResource extends Resource {
         REFERENCE_HANDLER,
 
         CLEANER,
-    };
+
+        ROOT_WINDOW,
+
+        XTOOLKIT,
+    }
 
     Priority getPriority();
 }

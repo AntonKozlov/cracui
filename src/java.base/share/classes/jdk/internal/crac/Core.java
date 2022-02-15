@@ -33,6 +33,8 @@ public class Core {
 
     private static native void registerPersistent0(FileDescriptor fd);
 
+    private Core() {}
+
     static {
         JDKContext = new JDKContext();
         jdk.crac.Core.getGlobalContext().register(JDKContext);
