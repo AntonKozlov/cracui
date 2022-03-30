@@ -79,8 +79,9 @@ public interface JDKResource extends Resource {
          */
         REFERENCE_HANDLER,
         /**
-         * Priority of the
-         * jdk.internal.ref.CleanerImpl resources
+         * Priority of
+         * jdk.internal.ref.CleanerImpl resources,
+         * java.lang.invoke.MethodType.ConcurrentWeakInternSet resource
          */
         CLEANERS,
     };

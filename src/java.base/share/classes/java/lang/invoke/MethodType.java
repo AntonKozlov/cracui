@@ -52,6 +52,10 @@ import static java.lang.invoke.MethodHandleStatics.UNSAFE;
 import static java.lang.invoke.MethodHandleStatics.newIllegalArgumentException;
 import static java.lang.invoke.MethodType.fromDescriptor;
 
+import jdk.crac.Context;
+import jdk.crac.Resource;
+import jdk.internal.crac.JDKResource;
+
 /**
  * A method type represents the arguments and return type accepted and
  * returned by a method handle, or the arguments and return type passed
@@ -1344,7 +1348,7 @@ s.writeObject(this.parameterArray());
      *
      * @param <T> interned type
      */
-    private static class ConcurrentWeakInternSet<T> {
+    private static class ConcurrentWeakInternSet<T> implements JDKResource {
 
         private final ConcurrentMap<WeakEntry<T>, WeakEntry<T>> map;
         private final ReferenceQueue<T> stale;
@@ -1352,6 +1356,8 @@ s.writeObject(this.parameterArray());
         public ConcurrentWeakInternSet() {
             this.map = new ConcurrentHashMap<>(512);
             this.stale = new ReferenceQueue<>();
+
+            jdk.internal.crac.Core.getJDKContext().register(this);
         }
 
         /**
@@ -1406,6 +1412,22 @@ s.writeObject(this.parameterArray());
             while ((reference = stale.poll()) != null) {
                 map.remove(reference);
             }
+        }
+
+        @Override
+        public Priority getPriority() {
+            return Priority.CLEANERS;
+        }
+
+        @Override
+        public void beforeCheckpoint(Context<? extends Resource> context) throws Exception {
+            // Remove empty elements
+            expungeStaleElements();
+        }
+
+        @Override
+        public void afterRestore(Context<? extends Resource> context) throws Exception {
+
         }
 
         private static class WeakEntry<T> extends WeakReference<T> {
