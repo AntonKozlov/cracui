@@ -33,6 +33,7 @@ import sun.util.logging.PlatformLogger;
 import jdk.crac.Context;
 import jdk.crac.Resource;
 import jdk.internal.crac.JDKResource;
+import jdk.internal.crac.priorities.X11Priorities;
 
 public class XBaseWindow {
     private static final PlatformLogger log = PlatformLogger.getLogger("sun.awt.X11.XBaseWindow");
@@ -43,8 +44,8 @@ public class XBaseWindow {
 
     private static final JDKResource xBaseWindowResource = new JDKResource() {
         @Override
-        public Priority getPriority() {
-            return Priority.XBASEWINDOW;
+        public int getPriority() {
+            return X11Priorities.XBASEWINDOW.ordinal();
         }
 
         @Override
@@ -59,7 +60,7 @@ public class XBaseWindow {
     };
 
     static {
-        jdk.internal.crac.Core.getJDKContext().register(xBaseWindowResource);
+        jdk.internal.crac.Core.getX11Context().register(xBaseWindowResource);
     }
 
     public static final String

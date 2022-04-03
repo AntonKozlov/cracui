@@ -76,7 +76,7 @@ import jdk.internal.access.JavaUtilZipFileAccess;
 import jdk.internal.access.SharedSecrets;
 import jdk.internal.crac.Core;
 import jdk.internal.crac.JDKResource;
-import jdk.internal.crac.JDKResource.Priority;
+import jdk.internal.crac.priorities.JDKPriorities;
 import jdk.internal.util.jar.InvalidJarIndexError;
 import jdk.internal.util.jar.JarIndex;
 import sun.net.util.URLUtil;
@@ -846,8 +846,8 @@ public class URLClassPath {
             }
 
             @Override
-            public Priority getPriority() {
-                return Priority.NORMAL;
+            public int getPriority() {
+                return JDKPriorities.NORMAL.ordinal();
             }
         }
 

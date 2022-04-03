@@ -36,13 +36,14 @@ import sun.awt.SunToolkit;
 import jdk.crac.Context;
 import jdk.crac.Resource;
 import jdk.internal.crac.JDKResource;
+import jdk.internal.crac.priorities.X11Priorities;
 
 public final class XGlobalCursorManager extends GlobalCursorManager {
 
     private static final JDKResource xGlobalCursorManagerResource = new JDKResource() {
         @Override
-        public Priority getPriority() {
-            return Priority.XCURSORMANAGER;
+        public int getPriority() {
+            return X11Priorities.XCURSORMANAGER.ordinal();
         }
 
         @Override
@@ -57,7 +58,7 @@ public final class XGlobalCursorManager extends GlobalCursorManager {
     };
 
     static {
-        jdk.internal.crac.Core.getJDKContext().register(xGlobalCursorManagerResource);
+        jdk.internal.crac.Core.getX11Context().register(xGlobalCursorManagerResource);
     }
 
     // cached nativeContainer

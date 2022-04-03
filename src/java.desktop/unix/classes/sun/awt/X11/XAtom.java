@@ -64,6 +64,7 @@ import java.util.HashMap;
 import jdk.crac.Context;
 import jdk.crac.Resource;
 import jdk.internal.crac.JDKResource;
+import jdk.internal.crac.priorities.X11Priorities;
 
 public final class XAtom {
 
@@ -147,8 +148,8 @@ public final class XAtom {
 
     private static final JDKResource xAtomResource = new JDKResource() {
         @Override
-        public Priority getPriority () {
-            return Priority.XATOM;
+        public int getPriority() {
+            return X11Priorities.XATOM.ordinal();
         }
 
         @Override
@@ -164,7 +165,7 @@ public final class XAtom {
     };
 
     static {
-        jdk.internal.crac.Core.getJDKContext().register(xAtomResource);
+        jdk.internal.crac.Core.getX11Context().register(xAtomResource);
     }
 
     static void register(XAtom at) {

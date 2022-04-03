@@ -45,6 +45,7 @@ import sun.util.logging.PlatformLogger;
 import jdk.crac.Context;
 import jdk.crac.Resource;
 import jdk.internal.crac.JDKResource;
+import jdk.internal.crac.priorities.X11Priorities;
 
 /**
  * Class incapsulating knowledge about window managers in general
@@ -59,8 +60,8 @@ final class XWM
 
     private static final JDKResource xWMResource = new JDKResource() {
         @Override
-        public Priority getPriority() {
-            return Priority.XWM;
+        public int getPriority() {
+            return X11Priorities.XWM.ordinal();
         }
 
         @Override
@@ -107,7 +108,7 @@ final class XWM
     };
 
     static {
-        jdk.internal.crac.Core.getJDKContext().register(xWMResource);
+        jdk.internal.crac.Core.getX11Context().register(xWMResource);
     }
 
     static XAtom XA_MWM_HINTS = new XAtom();

@@ -35,11 +35,11 @@ public class JDKContext extends AbstractContextImpl<JDKResource, Void> {
     static class ContextComparator implements Comparator<Map.Entry<JDKResource, Void>> {
         @Override
         public int compare(Map.Entry<JDKResource, Void> o1, Map.Entry<JDKResource, Void> o2) {
-            return o1.getKey().getPriority().compareTo(o2.getKey().getPriority());
+            return o1.getKey().getPriority() - o2.getKey().getPriority();
         }
     }
 
-    JDKContext() {
+    protected JDKContext() {
         super(new ContextComparator());
     }
 

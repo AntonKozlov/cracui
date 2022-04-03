@@ -65,6 +65,7 @@ import sun.util.logging.PlatformLogger;
 import jdk.crac.Context;
 import jdk.crac.Resource;
 import jdk.internal.crac.JDKResource;
+import jdk.internal.crac.priorities.X11Priorities;
 
 class XWindow extends XBaseWindow implements X11ComponentPeer {
     private static PlatformLogger log = PlatformLogger.getLogger("sun.awt.X11.XWindow");
@@ -75,8 +76,8 @@ class XWindow extends XBaseWindow implements X11ComponentPeer {
 
     private static final JDKResource xWindowResource = new JDKResource() {
         @Override
-        public Priority getPriority() {
-            return Priority.XWINDOW;
+        public int getPriority() {
+            return X11Priorities.XWINDOW.ordinal();
         }
 
         @Override
@@ -173,7 +174,7 @@ class XWindow extends XBaseWindow implements X11ComponentPeer {
     static {
         initIDs();
 
-        jdk.internal.crac.Core.getJDKContext().register(xWindowResource);
+        jdk.internal.crac.Core.getX11Context().register(xWindowResource);
     }
 
     XWindow(XCreateWindowParams params) {

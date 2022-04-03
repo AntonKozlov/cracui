@@ -48,6 +48,7 @@ import sun.java2d.xr.XRSurfaceData;
 import jdk.crac.Context;
 import jdk.crac.Resource;
 import jdk.internal.crac.JDKResource;
+import jdk.internal.crac.priorities.X11GEPriorities;
 
 /**
  * This is an implementation of a GraphicsEnvironment object for the
@@ -62,8 +63,8 @@ public final class X11GraphicsEnvironment extends SunGraphicsEnvironment {
 
     private static final JDKResource x11GEResource = new JDKResource() {
         @Override
-        public Priority getPriority() {
-            return Priority.X11GE;
+        public int getPriority() {
+            return X11GEPriorities.X11GE.ordinal();
         }
 
         @Override
@@ -154,7 +155,7 @@ public final class X11GraphicsEnvironment extends SunGraphicsEnvironment {
         // Install the correct surface manager factory.
         SurfaceManagerFactory.setInstance(new UnixSurfaceManagerFactory());
 
-        jdk.internal.crac.Core.getJDKContext().register(x11GEResource);
+        jdk.internal.crac.Core.getX11GEContext().register(x11GEResource);
     }
 
 

@@ -153,6 +153,7 @@ import sun.util.logging.PlatformLogger;
 import jdk.crac.Context;
 import jdk.crac.Resource;
 import jdk.internal.crac.JDKResource;
+import jdk.internal.crac.priorities.X11Priorities;
 
 import static sun.awt.X11.XlibUtil.scaleDown;
 
@@ -221,8 +222,8 @@ public final class XToolkit extends UNIXToolkit implements Runnable {
 
     private static final JDKResource xToolkitResource = new JDKResource() {
         @Override
-        public Priority getPriority() {
-            return Priority.XTOOLKIT;
+        public int getPriority() {
+            return X11Priorities.XTOOLKIT.ordinal();
         }
 
         @Override
@@ -315,7 +316,7 @@ public final class XToolkit extends UNIXToolkit implements Runnable {
     static {
         initStatic();
 
-        jdk.internal.crac.Core.getJDKContext().register(xToolkitResource);
+        jdk.internal.crac.Core.getX11Context().register(xToolkitResource);
     }
 
     /*

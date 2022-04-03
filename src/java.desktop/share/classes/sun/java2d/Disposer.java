@@ -39,6 +39,7 @@ import java.util.Hashtable;
 import jdk.crac.Context;
 import jdk.crac.Resource;
 import jdk.internal.crac.JDKResource;
+import jdk.internal.crac.priorities.JDKPriorities;
 
 /**
  * This class is used for registering and disposing the native
@@ -101,8 +102,8 @@ public class Disposer implements Runnable, JDKResource {
     }
 
     @Override
-    public Priority getPriority() {
-        return Priority.DISPOSERS;
+    public int getPriority() {
+        return JDKPriorities.DISPOSERS.ordinal();
     }
 
     @Override

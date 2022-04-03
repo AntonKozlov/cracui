@@ -30,7 +30,7 @@ import jdk.crac.Context;
 import jdk.crac.Resource;
 import jdk.internal.crac.Core;
 import jdk.internal.crac.JDKResource;
-import jdk.internal.crac.JDKResource.Priority;
+import jdk.internal.crac.priorities.JDKPriorities;
 
 /*
  * On Unix systems we simply delegate to native methods.
@@ -52,8 +52,8 @@ class PlainSocketImpl extends AbstractPlainSocketImpl
         }
 
         @Override
-        public Priority getPriority() {
-            return Priority.NORMAL;
+        public int getPriority() {
+            return JDKPriorities.NORMAL.ordinal();
         }
     }
 

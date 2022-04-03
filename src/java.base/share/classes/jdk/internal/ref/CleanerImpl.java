@@ -37,6 +37,7 @@ import java.util.function.Function;
 import jdk.crac.Context;
 import jdk.crac.Resource;
 import jdk.internal.crac.JDKResource;
+import jdk.internal.crac.priorities.JDKPriorities;
 import jdk.internal.misc.InnocuousThread;
 
 /**
@@ -153,8 +154,8 @@ public final class CleanerImpl implements Runnable, JDKResource {
     }
 
     @Override
-    public Priority getPriority() {
-        return Priority.CLEANERS;
+    public int getPriority() {
+        return JDKPriorities.CLEANERS.ordinal();
     }
 
     @Override

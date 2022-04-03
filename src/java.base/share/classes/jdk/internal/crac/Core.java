@@ -26,10 +26,18 @@
 
 package jdk.internal.crac;
 
+import jdk.internal.crac.coresources.AWTCoResource;
+import jdk.internal.crac.coresources.X11CoResource;
+import jdk.internal.crac.coresources.X11GECoResource;
+
 import java.io.FileDescriptor;
 
 public class Core {
     private static JDKContext JDKContext;
+
+    private static AWTCoResource AWTCoResource;
+    private static X11CoResource X11CoResource;
+    private static X11GECoResource X11GECoResource;
 
     private static native void registerPersistent0(FileDescriptor fd);
 
@@ -39,11 +47,30 @@ public class Core {
 
     static {
         JDKContext = new JDKContext();
+
+        AWTCoResource = new AWTCoResource();
+        X11CoResource = new X11CoResource();
+        X11GECoResource = new X11GECoResource();
+
+        JDKContext.register(AWTCoResource);
+        JDKContext.register(X11CoResource);
+        JDKContext.register(X11GECoResource);
+
         jdk.crac.Core.getGlobalContext().register(JDKContext);
     }
 
     public static JDKContext getJDKContext() {
         return JDKContext;
+    }
+
+    public static JDKContext getAWTContext() {
+        return AWTCoResource;
+    }
+    public static JDKContext getX11Context() {
+        return X11CoResource;
+    }
+    public static JDKContext getX11GEContext() {
+        return X11GECoResource;
     }
 
     public static void registerPersistent(FileDescriptor fd) {

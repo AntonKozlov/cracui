@@ -27,6 +27,8 @@ package sun.security.provider;
 
 import jdk.crac.Context;
 import jdk.crac.Resource;
+import jdk.internal.crac.JDKResource;
+import jdk.internal.crac.priorities.JDKPriorities;
 
 import java.io.IOException;
 import java.security.MessageDigest;
@@ -58,7 +60,7 @@ import java.util.concurrent.locks.ReentrantLock;
  */
 
 public final class SecureRandom extends SecureRandomSpi
-implements java.io.Serializable, jdk.internal.crac.JDKResource {
+implements java.io.Serializable, JDKResource {
 
     @java.io.Serial
     private static final long serialVersionUID = 3581829991155417889L;
@@ -239,8 +241,8 @@ implements java.io.Serializable, jdk.internal.crac.JDKResource {
     }
 
     @Override
-    public Priority getPriority() {
-        return Priority.SECURE_RANDOM;
+    public int getPriority() {
+        return JDKPriorities.SECURE_RANDOM.ordinal();
     }
 
     /**
@@ -249,7 +251,7 @@ implements java.io.Serializable, jdk.internal.crac.JDKResource {
      *
      * Bloch, Effective Java Second Edition: Item 71
      */
-    private static class SeederHolder implements jdk.internal.crac.JDKResource {
+    private static class SeederHolder implements JDKResource {
         private static final SeederHolder seederHolder = new SeederHolder();
         private final SecureRandom seeder;
 
@@ -282,8 +284,8 @@ implements java.io.Serializable, jdk.internal.crac.JDKResource {
         }
 
         @Override
-        public Priority getPriority() {
-            return Priority.SEEDER_HOLDER;
+        public int getPriority() {
+            return JDKPriorities.SEEDER_HOLDER.ordinal();
         }
     }
 

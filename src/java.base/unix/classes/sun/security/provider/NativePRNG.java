@@ -34,6 +34,7 @@ import java.util.concurrent.locks.ReentrantReadWriteLock;
 import jdk.crac.Context;
 import jdk.crac.Resource;
 import jdk.internal.crac.JDKResource;
+import jdk.internal.crac.priorities.JDKPriorities;
 import sun.security.util.Debug;
 
 /**
@@ -606,8 +607,8 @@ public final class NativePRNG extends SecureRandomSpi {
         }
 
         @Override
-        public Priority getPriority() {
-            return Priority.NATIVE_PRNG;
+        public int getPriority() {
+            return JDKPriorities.NATIVE_PRNG.ordinal();
         }
 
     }

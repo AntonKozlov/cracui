@@ -34,7 +34,7 @@ import jdk.internal.access.JavaIOFileDescriptorAccess;
 import jdk.internal.access.SharedSecrets;
 import jdk.internal.crac.Core;
 import jdk.internal.crac.JDKResource;
-import jdk.internal.crac.JDKResource.Priority;
+import jdk.internal.crac.priorities.JDKPriorities;
 
 class FileDispatcherImpl extends FileDispatcher {
     static class ResourceProxy implements JDKResource {
@@ -50,8 +50,8 @@ class FileDispatcherImpl extends FileDispatcher {
         }
 
         @Override
-        public Priority getPriority() {
-            return Priority.NORMAL;
+        public int getPriority() {
+            return JDKPriorities.NORMAL.ordinal();
         }
     }
 

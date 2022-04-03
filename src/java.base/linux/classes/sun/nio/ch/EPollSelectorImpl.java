@@ -29,7 +29,7 @@ package sun.nio.ch;
 import jdk.crac.Context;
 import jdk.crac.Resource;
 import jdk.internal.crac.JDKResource;
-import jdk.internal.crac.JDKResource.Priority;
+import jdk.internal.crac.priorities.JDKPriorities;
 
 import java.io.IOException;
 import java.nio.channels.ClosedSelectorException;
@@ -405,7 +405,7 @@ class EPollSelectorImpl extends SelectorImpl implements JDKResource {
     }
 
     @Override
-    public Priority getPriority() {
-        return Priority.EPOLLSELECTOR;
+    public int getPriority() {
+        return JDKPriorities.EPOLLSELECTOR.ordinal();
     }
 }

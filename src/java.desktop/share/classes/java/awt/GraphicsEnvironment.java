@@ -41,6 +41,7 @@ import sun.security.action.GetPropertyAction;
 import jdk.crac.Context;
 import jdk.crac.Resource;
 import jdk.internal.crac.JDKResource;
+import jdk.internal.crac.priorities.X11GEPriorities;
 
 /**
  *
@@ -84,8 +85,8 @@ public abstract class GraphicsEnvironment {
 
         private static final JDKResource localGEResource = new JDKResource() {
             @Override
-            public Priority getPriority() {
-                return Priority.GE;
+            public int getPriority() {
+                return X11GEPriorities.GE.ordinal();
             }
 
             @Override
@@ -100,7 +101,7 @@ public abstract class GraphicsEnvironment {
         };
 
         static {
-            jdk.internal.crac.Core.getJDKContext().register(localGEResource);
+            jdk.internal.crac.Core.getX11GEContext().register(localGEResource);
         }
 
         /**

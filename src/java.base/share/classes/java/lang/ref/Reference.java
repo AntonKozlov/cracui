@@ -28,6 +28,7 @@ package java.lang.ref;
 import jdk.crac.Context;
 import jdk.crac.Resource;
 import jdk.internal.crac.JDKResource;
+import jdk.internal.crac.priorities.JDKPriorities;
 import jdk.internal.vm.annotation.ForceInline;
 import jdk.internal.vm.annotation.IntrinsicCandidate;
 import jdk.internal.access.JavaLangRefAccess;
@@ -335,8 +336,8 @@ public abstract class Reference<T> {
 
         referenceHandlerResource = new JDKResource() {
             @Override
-            public Priority getPriority() {
-                return Priority.REFERENCE_HANDLER;
+            public int getPriority() {
+                return JDKPriorities.REFERENCE_HANDLER.ordinal();
             }
 
             @Override

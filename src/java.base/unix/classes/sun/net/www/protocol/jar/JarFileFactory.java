@@ -38,6 +38,7 @@ import java.security.Permission;
 import sun.net.util.URLUtil;
 import jdk.crac.Context;
 import jdk.crac.Resource;
+import jdk.internal.crac.priorities.JDKPriorities;
 
 /* A factory for cached JAR file. This class is used to both retrieve
  * and cache Jar files.
@@ -247,8 +248,8 @@ class JarFileFactory implements URLJarFile.URLJarFileCloseController, jdk.intern
     }
 
     @Override
-    public Priority getPriority() {
-        return Priority.NORMAL;
+    public int getPriority() {
+        return JDKPriorities.NORMAL.ordinal();
     }
 
     @Override

@@ -42,6 +42,7 @@ import sun.util.logging.PlatformLogger;
 import jdk.crac.Context;
 import jdk.crac.Resource;
 import jdk.internal.crac.JDKResource;
+import jdk.internal.crac.priorities.AWTPriorities;
 
 /**
  * A class to encapsulate the bitmap representation of the mouse cursor.
@@ -53,8 +54,8 @@ public class Cursor implements java.io.Serializable {
 
     private static final JDKResource cursorResource = new JDKResource() {
         @Override
-        public Priority getPriority() {
-            return Priority.CURSOR;
+        public int getPriority() {
+            return AWTPriorities.CURSOR.ordinal();
         }
 
         @Override
@@ -228,7 +229,7 @@ public class Cursor implements java.io.Serializable {
                 }
             });
 
-        jdk.internal.crac.Core.getJDKContext().register(cursorResource);
+        jdk.internal.crac.Core.getAWTContext().register(cursorResource);
     }
 
     /**

@@ -28,6 +28,7 @@ package sun.awt.X11;
 import jdk.crac.Context;
 import jdk.crac.Resource;
 import jdk.internal.crac.JDKResource;
+import jdk.internal.crac.priorities.X11Priorities;
 
 /**
  * This class represents AWT application root window functionality.
@@ -50,8 +51,8 @@ class XRootWindow extends XBaseWindow {
 
         private static final JDKResource xRootWindowResource = new JDKResource() {
             @Override
-            public Priority getPriority() {
-                return Priority.XROOTWINDOW;
+            public int getPriority() {
+                return X11Priorities.XROOTWINDOW.ordinal();
             }
 
             @Override
@@ -69,7 +70,7 @@ class XRootWindow extends XBaseWindow {
         static {
             init();
 
-            jdk.internal.crac.Core.getJDKContext().register(xRootWindowResource);
+            jdk.internal.crac.Core.getX11Context().register(xRootWindowResource);
         }
 
     }

@@ -77,6 +77,7 @@ import sun.util.logging.PlatformLogger;
 import jdk.crac.Context;
 import jdk.crac.Resource;
 import jdk.internal.crac.JDKResource;
+import jdk.internal.crac.priorities.AWTPriorities;
 
 /**
  * A {@code Window} object is a top-level window with no borders and no
@@ -172,8 +173,8 @@ public class Window extends Container implements Accessible {
 
     private static final JDKResource windowResource = new JDKResource() {
         @Override
-        public Priority getPriority() {
-            return Priority.WINDOW;
+        public int getPriority() {
+            return AWTPriorities.WINDOW.ordinal();
         }
 
         @Override
@@ -455,7 +456,7 @@ public class Window extends Container implements Accessible {
             new GetPropertyAction("java.awt.Window.locationByPlatform"));
         locationByPlatformProp = (s2 != null && s2.equals("true"));
 
-        jdk.internal.crac.Core.getJDKContext().register(windowResource);
+        jdk.internal.crac.Core.getAWTContext().register(windowResource);
     }
 
     /**
