@@ -19,9 +19,9 @@ import jdk.internal.crac.JDKResource;
  * In {@link jdk.internal.crac.priorities} package {@code JDKResource}
  * and {@code JDKCoResource} priorities are defined.
  *
- * @see     jdk.internal.crac.coresources.JDKCoResource
  * @see     jdk.internal.crac.JDKContext
  * @see     jdk.internal.crac.JDKResource
+ * @see     jdk.internal.crac.priorities.JDKPriorities
  */
 public abstract class JDKCoResource extends JDKContext implements JDKResource {
 
