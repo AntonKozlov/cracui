@@ -35,6 +35,13 @@ import sun.awt.SunToolkit;
 
 public final class XGlobalCursorManager extends GlobalCursorManager {
 
+    static void beforeCheckpoint() throws Exception {
+        manager = null;
+    }
+
+    static void afterRestore() throws Exception {
+    }
+
     // cached nativeContainer
     private WeakReference<Component> nativeContainer;
 

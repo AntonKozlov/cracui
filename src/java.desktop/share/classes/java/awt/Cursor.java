@@ -31,6 +31,7 @@ import java.io.Serial;
 import java.security.AccessController;
 import java.security.PrivilegedAction;
 import java.security.PrivilegedExceptionAction;
+import java.util.Arrays;
 import java.util.Hashtable;
 import java.util.Properties;
 import java.util.StringTokenizer;
@@ -202,6 +203,27 @@ public class Cursor implements java.io.Serializable {
 
                 public int getType(Cursor cursor) {
                     return cursor.type;
+                }
+
+                /**
+                 * Setting to {@code null} predefined {@code Cursor} to reinitialize
+                 * {@code XToolkit} properly.
+                 * {@code Window} depends on this method.
+                 *
+                 * @see java.awt.Window
+                 */
+                public void beforeCheckpoint() throws Exception {
+                    Arrays.fill(predefinedPrivate, null);
+                    Arrays.fill(predefined, null);
+                }
+
+                /**
+                 * {@code Cursor} restoring to reinitialize {@code XToolkit} properly.
+                 * {@code Window} depends on this method.
+                 *
+                 * @see java.awt.Window
+                 */
+                public void afterRestore() throws Exception {
                 }
             });
     }

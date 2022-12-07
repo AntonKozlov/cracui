@@ -54,6 +54,37 @@ final class XWM
     private static final PlatformLogger insLog = PlatformLogger.getLogger("sun.awt.X11.insets.XWM");
     private static final PlatformLogger stateLog = PlatformLogger.getLogger("sun.awt.X11.states.XWM");
 
+    static void beforeCheckpoint() throws Exception {
+        winmgr_running = false;
+        awt_wmgr = XWM.UNDETERMINED_WM;
+
+        awtWMNonReparenting = -1;
+        awtWMStaticGravity = -1;
+
+        inited = false;
+        wm = null;
+        g_net_protocol = null;
+        g_win_protocol = null;
+
+        // Clear registered XAtoms
+        XAtom.beforeCheckpoint();
+    }
+
+    static void afterRestore() throws Exception {
+        XAtom.afterRestore();
+
+        // Initialize the cleared XWM atoms
+        XA_ENLIGHTENMENT_COMMS = new XAtom("ENLIGHTENMENT_COMMS", false);
+        XA_DT_SM_WINDOW_INFO = new XAtom("_DT_SM_WINDOW_INFO", false);
+        XA_DT_SM_STATE_INFO = new XAtom("_DT_SM_STATE_INFO", false);
+        XA_MOTIF_WM_INFO = new XAtom("_MOTIF_WM_INFO", false);
+        XA_DT_WORKSPACE_CURRENT = new XAtom("_DT_WORKSPACE_CURRENT", false);
+        XA_ICEWM_WINOPTHINT = new XAtom("_ICEWM_WINOPTHINT", false);
+        XA_SUN_WM_PROTOCOLS = new XAtom("_SUN_WM_PROTOCOLS", false);
+
+        init();
+    }
+
     static final XAtom XA_MWM_HINTS = new XAtom();
 
     private static Unsafe unsafe = XlibWrapper.unsafe;
@@ -416,8 +447,8 @@ final class XWM
      *
      * XXX: Any header that defines this structures???
      */
-    static final XAtom XA_DT_SM_WINDOW_INFO = new XAtom("_DT_SM_WINDOW_INFO", false);
-    static final XAtom XA_DT_SM_STATE_INFO = new XAtom("_DT_SM_STATE_INFO", false);
+    static XAtom XA_DT_SM_WINDOW_INFO = new XAtom("_DT_SM_WINDOW_INFO", false);
+    static XAtom XA_DT_SM_STATE_INFO = new XAtom("_DT_SM_STATE_INFO", false);
     static boolean isCDE() {
 
         if (!XA_DT_SM_WINDOW_INFO.isInterned()) {
@@ -493,8 +524,8 @@ final class XWM
      * second element of the property and check for presence of
      * _DT_SM_STATE_INFO(_DT_SM_STATE_INFO) on that window.
      */
-    static final XAtom XA_MOTIF_WM_INFO = new XAtom("_MOTIF_WM_INFO", false);
-    static final XAtom XA_DT_WORKSPACE_CURRENT = new XAtom("_DT_WORKSPACE_CURRENT", false);
+    static XAtom XA_MOTIF_WM_INFO = new XAtom("_MOTIF_WM_INFO", false);
+    static XAtom XA_DT_WORKSPACE_CURRENT = new XAtom("_DT_WORKSPACE_CURRENT", false);
     static boolean isMotif() {
 
         if (!(XA_MOTIF_WM_INFO.isInterned()/* && XA_DT_WORKSPACE_CURRENT.isInterned()*/) ) {
@@ -624,7 +655,7 @@ final class XWM
      *
      * Gaa, dirty dances...
      */
-    static final XAtom XA_ICEWM_WINOPTHINT = new XAtom("_ICEWM_WINOPTHINT", false);
+    static XAtom XA_ICEWM_WINOPTHINT = new XAtom("_ICEWM_WINOPTHINT", false);
     static final char[] opt = {
         'A','W','T','_','I','C','E','W','M','_','T','E','S','T','\0',
         'a','l','l','W','o','r','k','s','p','a','c','e','s','\0',
@@ -701,7 +732,7 @@ final class XWM
      * This one is pretty lame, but the only property peculiar to OLWM is
      * _SUN_WM_PROTOCOLS(ATOM[]).  Fortunately, olwm deletes it on exit.
      */
-    static final XAtom XA_SUN_WM_PROTOCOLS = new XAtom("_SUN_WM_PROTOCOLS", false);
+    static XAtom XA_SUN_WM_PROTOCOLS = new XAtom("_SUN_WM_PROTOCOLS", false);
     static boolean isOpenLook() {
         if (!XA_SUN_WM_PROTOCOLS.isInterned()) {
             return false;

@@ -35,10 +35,12 @@ public interface JDKResource extends Resource {
      * Most resources should use priority NORMAL (the lowest priority).
      * Other priorities define sequence of checkpoint notification
      * for dependent resources.
+     *
      * Checkpoint notification will be processed in the order from the lowest
      * to the highest priorities.
      * Restore notification will be processed in the revers order:
      * from the highest to the lowest priorities.
+     *
      * JDK resources with the same priority will be notified about checkpoint
      * in the reverse order of registration.
      * JDK resources with the same priority will be notified about restore
@@ -47,6 +49,8 @@ public interface JDKResource extends Resource {
     enum Priority {
         /**
          * Most resources should use this option.
+         *
+         * @see sun.awt.X11.X11GraphicsEnvironment
          */
         NORMAL,
         /**
@@ -73,11 +77,6 @@ public interface JDKResource extends Resource {
         /* Keep next priorities last to ensure handling of pending References
          * appeared on earlier priorities. */
 
-        /**
-         * Priority of the
-         * java.lan.ref.Reference static resource
-         */
-        REFERENCE_HANDLER,
         /**
          * Priority of the
          * jdk.internal.ref.CleanerImpl resources

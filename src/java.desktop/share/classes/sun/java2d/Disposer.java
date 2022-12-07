@@ -26,6 +26,8 @@
 package sun.java2d;
 
 import sun.awt.util.ThreadGroupUtils;
+import sun.awt.AWTAccessor;
+import sun.awt.AWTAccessor.DisposerAccessor;
 
 import java.lang.ref.Reference;
 import java.lang.ref.ReferenceQueue;
@@ -91,6 +93,22 @@ public class Disposer implements Runnable {
             t.setPriority(Thread.MAX_PRIORITY);
             t.start();
             return null;
+        });
+
+        AWTAccessor.setDisposerAccessor(new DisposerAccessor() {
+            public void beforeCheckpoint() throws Exception {
+                final long timeout = 1_000; // reasonable for ref.clear() and rec.dispose() to finish
+                while (!records.isEmpty() &&
+                        !jdk.crac.Misc.waitForQueueProcessed(queue, 1, timeout)) {
+                    // This loop reflects the loop in the disposer handler thread,
+                    // that allows a race between reference disposing from the records
+                    // and waiting for the queue. So we need to wait for the queue
+                    // to be processed with the timeout as well.
+                }
+            }
+
+            public void afterRestore() throws Exception {
+            }
         });
     }
 

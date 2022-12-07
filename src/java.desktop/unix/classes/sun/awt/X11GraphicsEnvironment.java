@@ -56,7 +56,41 @@ import sun.java2d.xr.XRSurfaceData;
 @SuppressWarnings("removal")
 public final class X11GraphicsEnvironment extends SunGraphicsEnvironment {
 
+    protected void beforeCheckpoint() throws Exception {
+        // Deinitialize AWT and X11
+        AWTAccessor.getXToolkitAccessor().beforeCheckpoint();
+
+        // Ensure handling of pending disposal references
+        AWTAccessor.getDisposerAccessor().beforeCheckpoint();
+
+        // XCloseDisplay - disconnect from X11 server
+        beforeCheckpointNative();
+    }
+
+    protected void afterRestore() throws Exception {
+        afterRestoreNative();
+        // XOpenDisplay - connect to X11 server
+        initStatic();
+        // Reinitialize X11GraphicsEnvironment
+        init();
+
+        AWTAccessor.getDisposerAccessor().afterRestore();
+
+        // Initialize X11 and AWT
+        AWTAccessor.getXToolkitAccessor().afterRestore();
+    }
+
+    private static native void beforeCheckpointNative();
+    private static native void afterRestoreNative();
+
     static {
+        initStatic();
+
+        // Install the correct surface manager factory.
+        SurfaceManagerFactory.setInstance(new UnixSurfaceManagerFactory());
+    }
+
+    private static void initStatic() {
         java.security.AccessController.doPrivileged(
                           new java.security.PrivilegedAction<Object>() {
             public Object run() {
@@ -127,12 +161,7 @@ public final class X11GraphicsEnvironment extends SunGraphicsEnvironment {
                 return null;
             }
          });
-
-        // Install the correct surface manager factory.
-        SurfaceManagerFactory.setInstance(new UnixSurfaceManagerFactory());
-
     }
-
 
     private static boolean glxAvailable;
     private static boolean glxVerbose;
@@ -193,6 +222,10 @@ public final class X11GraphicsEnvironment extends SunGraphicsEnvironment {
     private native int getDefaultScreenNum();
 
     public X11GraphicsEnvironment() {
+        init();
+    }
+
+    private void init() {
         if (isHeadless()) {
             return;
         }

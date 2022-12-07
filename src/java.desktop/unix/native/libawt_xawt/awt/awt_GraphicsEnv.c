@@ -56,6 +56,8 @@
 #include <dlfcn.h>
 #include "Trace.h"
 
+#include <pthread.h>
+
 int awt_numScreens;     /* Xinerama-aware number of screens */
 
 AwtScreenDataPtr x11Screens; // should be guarded by AWT_LOCK()/AWT_UNLOCK()
@@ -66,7 +68,15 @@ AwtScreenDataPtr x11Screens; // should be guarded by AWT_LOCK()/AWT_UNLOCK()
  */
 static jboolean glxRequested = JNI_FALSE;
 
-Display *awt_display;
+Display *awt_display_storage;
+pthread_mutex_t lock = PTHREAD_MUTEX_INITIALIZER;
+Bool crac_lock = False;
+
+Display *get_awt_display(void) {
+    pthread_mutex_lock(&lock);
+    pthread_mutex_unlock(&lock);
+    return awt_display_storage;
+}
 
 jclass tkClass = NULL;
 jmethodID awtLockMID = NULL;
@@ -286,7 +296,7 @@ makeDefaultConfig(JNIEnv *env, int screen) {
     /* we tried everything, give up */
     JNU_ThrowInternalError(env, "Can't find supported visual");
     XCloseDisplay(awt_display);
-    awt_display = NULL;
+    awt_display_storage = NULL;
     return NULL;
 }
 
@@ -712,9 +722,8 @@ awt_init_Display(JNIEnv *env, jobject this)
     jclass klass;
     Display *dpy;
     char errmsg[128];
-    int i;
 
-    if (awt_display) {
+    if (!crac_lock && awt_display) {
         return awt_display;
     }
 
@@ -736,7 +745,11 @@ awt_init_Display(JNIEnv *env, jobject this)
         }
     }
 
-    dpy = awt_display = XOpenDisplay(NULL);
+    dpy = awt_display_storage = XOpenDisplay(NULL);
+    if (crac_lock) {
+        pthread_mutex_unlock(&lock);
+        crac_lock = False;
+    }
     if (!dpy) {
         jio_snprintf(errmsg,
                      sizeof(errmsg),
@@ -794,6 +807,19 @@ Java_sun_awt_X11GraphicsEnvironment_initDisplay(JNIEnv *env, jobject this,
 {
     glxRequested = glxReq;
     (void) awt_init_Display(env, this);
+}
+
+JNIEXPORT void JNICALL
+Java_sun_awt_X11GraphicsEnvironment_beforeCheckpointNative(JNIEnv *env, jclass this)
+{
+    pthread_mutex_lock(&lock);
+    crac_lock = True;
+    XCloseDisplay(awt_display_storage);
+}
+
+JNIEXPORT void JNICALL
+Java_sun_awt_X11GraphicsEnvironment_afterRestoreNative(JNIEnv *env, jclass this)
+{
 }
 
 /*

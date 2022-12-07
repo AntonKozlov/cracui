@@ -38,6 +38,10 @@ import sun.java2d.HeadlessGraphicsEnvironment;
 import sun.java2d.SunGraphicsEnvironment;
 import sun.security.action.GetPropertyAction;
 
+import jdk.crac.Context;
+import jdk.crac.Resource;
+import jdk.internal.crac.JDKResource;
+
 /**
  *
  * The {@code GraphicsEnvironment} class describes the collection
@@ -96,6 +100,63 @@ public abstract class GraphicsEnvironment {
             }
             return ge;
         }
+    }
+
+    /**
+     * Reinitialization of the local {@code GraphicsEnvironment}.
+     *
+     * This must be done after GC and reference handling,
+     * because some objects require connection to be disposed.
+     * It depends on {@code GraphicsEnvironment} extending classes.
+     *
+     * @see sun.awt.X11GraphicsEnvironment
+     * @see jdk.internal.crac.JDKResource
+     */
+    private static final JDKResource jdkResource = new JDKResource() {
+        @Override
+        public JDKResource.Priority getPriority() {
+            return Priority.NORMAL;
+        }
+
+        @Override
+        public void beforeCheckpoint(Context<? extends Resource> context) throws Exception {
+            LocalGE.INSTANCE.beforeCheckpoint();
+        }
+
+        @Override
+        public void afterRestore(Context<? extends Resource> context) throws Exception {
+            LocalGE.INSTANCE.afterRestore();
+        }
+    };
+
+    /**
+     * {@code beforeCheckpoint()} operation for
+     * {@code GraphicsEnvironment} extending classes.
+     * Should be overridden for proper reinitialization
+     * of the local {@code GraphicsEnvironment}.
+     *
+     * @see sun.awt.X11GraphicsEnvironment
+     * @throws Exception if not overridden
+     */
+    protected void beforeCheckpoint() throws Exception {
+        throw new UnsupportedOperationException("Should be overridden.");
+    }
+
+    /**
+     * {@code afterRestore()} operation for
+     * {@code GraphicsEnvironment} extending classes.
+     * Should be overridden for proper reinitialization
+     * of the local {@code GraphicsEnvironment}.
+     *
+     * @see sun.awt.X11GraphicsEnvironment
+     * @throws Exception if not overridden
+     */
+    protected void afterRestore() throws Exception {
+        throw new UnsupportedOperationException("Should be overridden.");
+    }
+
+    static {
+        jdk.internal.crac.Core.getJDKContext().register(jdkResource);
     }
 
     /**

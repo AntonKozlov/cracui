@@ -140,6 +140,15 @@ public final class XAtom {
     public static final long XA_LAST_PREDEFINED=68;
     static HashMap<Long, XAtom> atomToAtom = new HashMap<Long, XAtom>();
     static HashMap<String, XAtom> nameToAtom = new HashMap<String, XAtom>();
+
+    static void beforeCheckpoint() throws Exception {
+        atomToAtom.clear();
+        nameToAtom.clear();
+    }
+
+    static void afterRestore() throws Exception {
+    }
+
     static void register(XAtom at) {
         if (at == null) {
             return;

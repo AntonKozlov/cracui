@@ -68,6 +68,28 @@ class XWindow extends XBaseWindow implements X11ComponentPeer {
     private static PlatformLogger eventLog = PlatformLogger.getLogger("sun.awt.X11.event.XWindow");
     private static final PlatformLogger focusLog = PlatformLogger.getLogger("sun.awt.X11.focus.XWindow");
     private static PlatformLogger keyEventLog = PlatformLogger.getLogger("sun.awt.X11.kye.XWindow");
+
+    static void beforeCheckpoint() throws Exception {
+        lastX = 0;
+        lastY = 0;
+        lastTime = 0;
+        lastButton = 0;
+        lastWindowRef = null;
+        clickCount = 0;
+
+        wm_protocols = null;
+        wm_delete_window = null;
+        wm_take_focus = null;
+
+        XBaseWindow.beforeCheckpoint();
+        XGlobalCursorManager.beforeCheckpoint();
+    }
+
+    static void afterRestore() throws Exception {
+        XGlobalCursorManager.afterRestore();
+        XBaseWindow.afterRestore();
+    }
+
   /* If a motion comes in while a multi-click is pending,
    * allow a smudge factor so that moving the mouse by a small
    * amount does not wipe out the multi-click state variables.

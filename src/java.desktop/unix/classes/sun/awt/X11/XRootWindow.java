@@ -32,9 +32,9 @@ package sun.awt.X11;
  */
 class XRootWindow extends XBaseWindow {
     private static class LazyHolder {
-        private static final XRootWindow xawtRootWindow;
+        private static XRootWindow xawtRootWindow;
 
-        static {
+        private static void init() {
             XToolkit.awtLock();
             try {
                 xawtRootWindow = new XRootWindow();
@@ -44,7 +44,28 @@ class XRootWindow extends XBaseWindow {
             }
         }
 
+        private static void deinit() {
+            LazyHolder.xawtRootWindow.destroy();
+            LazyHolder.xawtRootWindow = null;
+        }
+
+        static {
+            init();
+        }
     }
+
+    static void beforeCheckpoint() throws Exception {
+        LazyHolder.deinit();
+
+        XWindow.beforeCheckpoint();
+    }
+
+    static void afterRestore() throws Exception {
+        XWindow.afterRestore();
+
+        LazyHolder.init();
+    }
+
     static XRootWindow getInstance() {
         return LazyHolder.xawtRootWindow;
     }
