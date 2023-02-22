@@ -310,6 +310,42 @@ JNIEXPORT jlong JNICALL Java_sun_awt_X11_XlibWrapper_XCreateWindow
 }
 
 /*
+ * Class:     XBaseWindow
+ * Method:    XGetVisualIdByAddressNative
+ * Signature: (J)V
+ */
+JNIEXPORT void JNICALL Java_sun_awt_X11_XBaseWindow_XGetVisualIdByAddressNative
+  (JNIEnv *env, jclass clazz, jlong visual)
+{
+    Visual * vis = ((Visual *) jlong_to_ptr(visual));
+ 
+    printf("START XlibWrapper: XBaseWindow_XGetVisualIdByAddressNative \n");
+    printf("Visual : %p \n", vis);
+    if (vis != NULL) {
+        printf("VisualId : %ld \n", vis->visualid);
+    }
+    printf("END XlibWrapper: XBaseWindow_XGetVisualIdByAddressNative \n");
+}
+
+/*
+ * Class:     XWindow
+ * Method:    XGetVisualIdNative
+ * Signature: (J)V
+ */
+JNIEXPORT void JNICALL Java_sun_awt_X11_XWindow_XGetVisualIdNative
+  (JNIEnv *env, jclass clazz, jlong visual)
+{
+    Visual * vis = ((Visual *) jlong_to_ptr(visual));
+
+    printf("START XlibWrapper: XWindow_XGetVisualIdNative \n");
+    printf("Visual : %p \n", vis);
+    if (vis != NULL) {
+        printf("VisualId : %ld \n", vis->visualid);
+    }
+    printf("END XlibWrapper: XWindow_XGetVisualIdNative \n");
+}
+
+/*
  * Class:     XlibWrapper
  * Method:    XConvertCase
  * Signature: (JJJ)V
