@@ -226,6 +226,8 @@ class XWindow extends XBaseWindow implements X11ComponentPeer {
         X11GraphicsConfig config = (X11GraphicsConfig) getGraphicsConfiguration();
 
         XVisualInfo visInfo = gData.get_awt_visInfo();
+        System.out.println("preInit XWindow: visInfo = " + visInfo);
+        XGetVisualIdNative(((Long)visInfo.get_visual()).longValue());
 
         params.putIfNull(EVENT_MASK, XConstants.KeyPressMask | XConstants.KeyReleaseMask
             | XConstants.FocusChangeMask | XConstants.ButtonPressMask | XConstants.ButtonReleaseMask
@@ -245,18 +247,18 @@ class XWindow extends XBaseWindow implements X11ComponentPeer {
         
         
 
-        System.out.println("preInit XWindow before: params.get(VISUAL) = " + params.get(VISUAL));
+        // System.out.println("preInit XWindow before: params.get(VISUAL) = " + params.get(VISUAL));
 
-        System.out.println("preInit XWindow: XVisualInfo visualid before put map = ");// + visInfo.get_visualid());
-        Long visual1 = (Long)visInfo.get_visual();
-        XGetVisualIdNative(visual1.longValue());
+        // System.out.println("preInit XWindow: XVisualInfo visualid before put map = ");// + visInfo.get_visualid());
+        // Long visual1 = (Long)visInfo.get_visual();
+        // XGetVisualIdNative(visual1.longValue());
 
 
         params.putIfNull(VISUAL, visInfo.get_visual());
 
-        Long visual2 = (Long)params.get(VISUAL);
-        System.out.println("preInit XWindow after: params.get(VISUAL) = " + visual2);
-        XGetVisualIdNative(visual2.longValue());
+        // Long visual2 = (Long)params.get(VISUAL);
+        // System.out.println("preInit XWindow after: params.get(VISUAL) = " + visual2);
+        // XGetVisualIdNative(visual2.longValue());
 
         params.putIfNull(VALUE_MASK, XConstants.CWBorderPixel | XConstants.CWEventMask | XConstants.CWColormap);
         Long parentWindow = (Long)params.get(PARENT_WINDOW);
@@ -295,9 +297,9 @@ class XWindow extends XBaseWindow implements X11ComponentPeer {
         winAttr = new XWindowAttributesData();
         savedState = XUtilConstants.WithdrawnState;
 
-        Long visual = (Long)params.get(VISUAL);
-        System.out.println("preInit XWindow END: params.get(VISUAL) = " + visual);
-        XGetVisualIdNative(visual.longValue());
+        // Long visual = (Long)params.get(VISUAL);
+        // System.out.println("preInit XWindow END: params.get(VISUAL) = " + visual);
+        // XGetVisualIdNative(visual.longValue());
 
         System.out.println("END preInit XWindow");
     }

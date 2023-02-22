@@ -319,12 +319,12 @@ JNIEXPORT void JNICALL Java_sun_awt_X11_XBaseWindow_XGetVisualIdByAddressNative
 {
     Visual * vis = ((Visual *) jlong_to_ptr(visual));
  
-    printf("START XlibWrapper: XBaseWindow_XGetVisualIdByAddressNative \n");
-    printf("Visual : %p \n", vis);
+    // printf("START XlibWrapper: XBaseWindow_XGetVisualIdByAddressNative \n");
+    printf("native Visual : %p \n", vis);
     if (vis != NULL) {
-        printf("VisualId : %ld \n", vis->visualid);
+        printf("native VisualId : %ld \n", vis->visualid);
     }
-    printf("END XlibWrapper: XBaseWindow_XGetVisualIdByAddressNative \n");
+    // printf("END XlibWrapper: XBaseWindow_XGetVisualIdByAddressNative \n");
 }
 
 /*
@@ -337,12 +337,12 @@ JNIEXPORT void JNICALL Java_sun_awt_X11_XWindow_XGetVisualIdNative
 {
     Visual * vis = ((Visual *) jlong_to_ptr(visual));
 
-    printf("START XlibWrapper: XWindow_XGetVisualIdNative \n");
-    printf("Visual : %p \n", vis);
+    // printf("START XlibWrapper: XWindow_XGetVisualIdNative \n");
+    printf("native Visual : %p \n", vis);
     if (vis != NULL) {
-        printf("VisualId : %ld \n", vis->visualid);
+        printf("native VisualId : %ld \n", vis->visualid);
     }
-    printf("END XlibWrapper: XWindow_XGetVisualIdNative \n");
+    // printf("END XlibWrapper: XWindow_XGetVisualIdNative \n");
 }
 
 /*
