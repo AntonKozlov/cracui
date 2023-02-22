@@ -135,6 +135,7 @@ public class XBaseWindow {
      * initialize params.
      */
     void preInit(XCreateWindowParams params) {
+        System.out.println("START preInit XBaseWindow");
         state_lock = new StateLock();
         embedded = Boolean.TRUE.equals(params.get(EMBEDDED));
         visible = Boolean.TRUE.equals(params.get(VISIBLE));
@@ -157,6 +158,7 @@ public class XBaseWindow {
         }
 
         screen = -1;
+        System.out.println("END preInit XBaseWindow");
     }
 
     /**
@@ -183,6 +185,8 @@ public class XBaseWindow {
         awtLock();
         initialising = InitialiseState.INITIALISING;
         awtUnlock();
+
+        System.out.println("In init XBaseWindow params: :" + params);
 
         try {
             if (!Boolean.TRUE.equals(params.get(DELAYED))) {
@@ -211,6 +215,8 @@ public class XBaseWindow {
             awtUnlock();
         }
     }
+
+    private static native void XGetVisualIdByAddressNative(long visual);
 
     public boolean checkInitialised() {
         awtLock();
@@ -281,6 +287,7 @@ public class XBaseWindow {
      * @throws IllegalArgumentException if params is null
      */
     protected void checkParams(XCreateWindowParams params) {
+        System.out.println("In XBaseWindow checkparams start params.get(Visual) = " + params.get(VISUAL));
         if (params == null) {
             throw new IllegalArgumentException("Window creation parameters are null");
         }
@@ -300,6 +307,8 @@ public class XBaseWindow {
         // (see X vol. 1, 8.3.3.2)
         eventMask |= XConstants.PropertyChangeMask | XConstants.OwnerGrabButtonMask;
         params.put(EVENT_MASK, Long.valueOf(eventMask));
+
+        System.out.println("In XBaseWindow checkparams end params.get(Visual) = " + params.get(VISUAL));
     }
 
     /**
@@ -323,6 +332,16 @@ public class XBaseWindow {
      * @see #init
      */
     private void create(XCreateWindowParams params) {
+        System.out.println("START create XBaseWindow");
+
+        var a = params.get(VISUAL);
+        if (a != null) {
+            System.out.println("create XBaseWindow: start visual != null");
+            XGetVisualIdByAddressNative(((Long)a).longValue());
+        } else {
+            System.out.println("create XBaseWindow: start visual == null");
+        }
+
         XToolkit.awtLock();
         try {
             XSetWindowAttributes xattr = new XSetWindowAttributes();
@@ -357,6 +376,9 @@ public class XBaseWindow {
                 Integer depth = (Integer)params.get(DEPTH);
                 Integer visual_class = (Integer)params.get(VISUAL_CLASS);
                 Long visual = (Long)params.get(VISUAL);
+
+                System.out.println("create XBaseWindow: flag visual = " + visual);
+                XGetVisualIdByAddressNative(visual.longValue());
                 Boolean overrideRedirect = (Boolean)params.get(OVERRIDE_REDIRECT);
                 if (overrideRedirect != null) {
                     xattr.set_override_redirect(overrideRedirect.booleanValue());
@@ -384,6 +406,11 @@ public class XBaseWindow {
                 if (log.isLoggable(PlatformLogger.Level.FINE)) {
                     log.fine("Creating window for " + this + " with the following attributes: \n" + params);
                 }
+
+                long vis = visual.longValue();
+                System.out.println("create XBaseWindow: end visual = " + visual);
+                XGetVisualIdByAddressNative(vis);
+
                 window = XlibWrapper.XCreateWindow(XToolkit.getDisplay(),
                                                    parentWindow.longValue(),
                                                    scaleUp(bounds.x),
@@ -393,7 +420,8 @@ public class XBaseWindow {
                                                    0, // border
                                                    depth.intValue(), // depth
                                                    visual_class.intValue(), // class
-                                                   visual.longValue(), // visual
+                                                   //visual.longValue(), // visual
+                                                   vis, // visual
                                                    value_mask,  // value mask
                                                    xattr.pData); // attributes
 
@@ -407,6 +435,7 @@ public class XBaseWindow {
         } finally {
             XToolkit.awtUnlock();
         }
+        System.out.println("END create XBaseWindow");
     }
 
     public XCreateWindowParams getDelayedParams() {

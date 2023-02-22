@@ -211,7 +211,10 @@ class XWindow extends XBaseWindow implements X11ComponentPeer {
         graphicsConfigData = new AwtGraphicsConfigData(graphicsConfig.getAData());
     }
 
+    private static native void XGetVisualIdNative(long visual);
+
     void preInit(XCreateWindowParams params) {
+        System.out.println("START preInit XWindow");
         super.preInit(params);
         reparented = Boolean.TRUE.equals(params.get(REPARENTED));
 
@@ -221,7 +224,9 @@ class XWindow extends XBaseWindow implements X11ComponentPeer {
 
         AwtGraphicsConfigData gData = getGraphicsConfigurationData();
         X11GraphicsConfig config = (X11GraphicsConfig) getGraphicsConfiguration();
+
         XVisualInfo visInfo = gData.get_awt_visInfo();
+
         params.putIfNull(EVENT_MASK, XConstants.KeyPressMask | XConstants.KeyReleaseMask
             | XConstants.FocusChangeMask | XConstants.ButtonPressMask | XConstants.ButtonReleaseMask
             | XConstants.EnterWindowMask | XConstants.LeaveWindowMask | XConstants.PointerMotionMask
@@ -237,7 +242,22 @@ class XWindow extends XBaseWindow implements X11ComponentPeer {
         params.putIfNull(COLORMAP, gData.get_awt_cmap());
         params.putIfNull(DEPTH, gData.get_awt_depth());
         params.putIfNull(VISUAL_CLASS, Integer.valueOf(XConstants.InputOutput));
+        
+        
+
+        System.out.println("preInit XWindow before: params.get(VISUAL) = " + params.get(VISUAL));
+
+        System.out.println("preInit XWindow: XVisualInfo visualid before put map = ");// + visInfo.get_visualid());
+        Long visual1 = (Long)visInfo.get_visual();
+        XGetVisualIdNative(visual1.longValue());
+
+
         params.putIfNull(VISUAL, visInfo.get_visual());
+
+        Long visual2 = (Long)params.get(VISUAL);
+        System.out.println("preInit XWindow after: params.get(VISUAL) = " + visual2);
+        XGetVisualIdNative(visual2.longValue());
+
         params.putIfNull(VALUE_MASK, XConstants.CWBorderPixel | XConstants.CWEventMask | XConstants.CWColormap);
         Long parentWindow = (Long)params.get(PARENT_WINDOW);
         if (parentWindow == null || parentWindow.longValue() == 0) {
@@ -274,6 +294,12 @@ class XWindow extends XBaseWindow implements X11ComponentPeer {
         }
         winAttr = new XWindowAttributesData();
         savedState = XUtilConstants.WithdrawnState;
+
+        Long visual = (Long)params.get(VISUAL);
+        System.out.println("preInit XWindow END: params.get(VISUAL) = " + visual);
+        XGetVisualIdNative(visual.longValue());
+
+        System.out.println("END preInit XWindow");
     }
 
     void postInit(XCreateWindowParams params) {
