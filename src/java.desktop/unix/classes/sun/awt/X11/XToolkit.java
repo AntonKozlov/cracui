@@ -872,6 +872,7 @@ public final class XToolkit extends UNIXToolkit implements Runnable {
 
     private static void initStatic() {
         GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
+        // System.out.println("XToolkit initStatic() GraphicsEnvironment ge = " + ge);
         if (ge instanceof SunGraphicsEnvironment) {
             ((SunGraphicsEnvironment) ge).addDisplayChangedListener(
                     displayChangedHandler);

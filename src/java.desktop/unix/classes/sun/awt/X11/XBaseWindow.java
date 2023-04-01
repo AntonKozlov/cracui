@@ -186,8 +186,6 @@ public class XBaseWindow {
         initialising = InitialiseState.INITIALISING;
         awtUnlock();
 
-        System.out.println("In init XBaseWindow params: " + params);
-
         try {
             if (!Boolean.TRUE.equals(params.get(DELAYED))) {
                 preInit(params);
@@ -332,7 +330,7 @@ public class XBaseWindow {
      * @see #init
      */
     private void create(XCreateWindowParams params) {
-        // System.out.println("START create XBaseWindow");
+        System.out.println("XBaseWindow create() START with params = " + params);
 
         // var a = params.get(VISUAL);
         // if (a != null) {
@@ -377,8 +375,6 @@ public class XBaseWindow {
                 Integer visual_class = (Integer)params.get(VISUAL_CLASS);
                 Long visual = (Long)params.get(VISUAL);
 
-                // System.out.println("create XBaseWindow: flag visual = " + visual);
-                XGetVisualIdByAddressNative(visual.longValue());
                 Boolean overrideRedirect = (Boolean)params.get(OVERRIDE_REDIRECT);
                 if (overrideRedirect != null) {
                     xattr.set_override_redirect(overrideRedirect.booleanValue());
@@ -407,9 +403,8 @@ public class XBaseWindow {
                     log.fine("Creating window for " + this + " with the following attributes: \n" + params);
                 }
 
-                // long vis = visual.longValue();
-                // System.out.println("create XBaseWindow: end visual = " + visual);
-                // XGetVisualIdByAddressNative(vis);
+                System.out.println("XBaseWindow create(): visual = ");
+                XGetVisualIdByAddressNative(visual.longValue());
 
                 window = XlibWrapper.XCreateWindow(XToolkit.getDisplay(),
                                                    parentWindow.longValue(),
@@ -434,7 +429,8 @@ public class XBaseWindow {
         } finally {
             XToolkit.awtUnlock();
         }
-        System.out.println("END create XBaseWindow");
+        System.out.println("XBaseWindow create() END");
+        System.out.println();
     }
 
     public XCreateWindowParams getDelayedParams() {

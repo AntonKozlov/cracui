@@ -70,6 +70,7 @@ class XWindow extends XBaseWindow implements X11ComponentPeer {
     private static PlatformLogger keyEventLog = PlatformLogger.getLogger("sun.awt.X11.kye.XWindow");
 
     static void beforeCheckpoint() throws Exception {
+        System.out.println("XWindow beforeCheckpoint()");
         lastX = 0;
         lastY = 0;
         lastTime = 0;
@@ -208,13 +209,19 @@ class XWindow extends XBaseWindow implements X11ComponentPeer {
 
     protected void initGraphicsConfiguration() {
         graphicsConfig = (X11GraphicsConfig) target.getGraphicsConfiguration();
+        System.out.println("XWindow initGraphicsConfiguration(): graphicsConfig = " + graphicsConfig);
+        System.out.println("XWindow initGraphicsConfiguration(): graphicsConfig.getVisual() = " + graphicsConfig.getVisual());
+
         graphicsConfigData = new AwtGraphicsConfigData(graphicsConfig.getAData());
+        System.out.println("XWindow initGraphicsConfiguration(): graphicsConfigData = " + graphicsConfigData);
+        var vis = graphicsConfigData.get_awt_visInfo();
+        XGetVisualIdNative(((Long)vis.get_visual()).longValue());
     }
 
     private static native void XGetVisualIdNative(long visual);
 
     void preInit(XCreateWindowParams params) {
-        System.out.println("START preInit XWindow");
+        System.out.println("XWindow preInit() START");
         super.preInit(params);
         reparented = Boolean.TRUE.equals(params.get(REPARENTED));
 
@@ -223,11 +230,12 @@ class XWindow extends XBaseWindow implements X11ComponentPeer {
         initGraphicsConfiguration();
 
         AwtGraphicsConfigData gData = getGraphicsConfigurationData();
+
         X11GraphicsConfig config = (X11GraphicsConfig) getGraphicsConfiguration();
 
         XVisualInfo visInfo = gData.get_awt_visInfo();
-        System.out.println("preInit XWindow: visInfo = " + visInfo);
-        XGetVisualIdNative(((Long)visInfo.get_visual()).longValue());
+        // System.out.println("XWindow preInit(): visInfo = " + visInfo);
+        // XGetVisualIdNative(((Long)visInfo.get_visual()).longValue());
 
         params.putIfNull(EVENT_MASK, XConstants.KeyPressMask | XConstants.KeyReleaseMask
             | XConstants.FocusChangeMask | XConstants.ButtonPressMask | XConstants.ButtonReleaseMask
@@ -244,15 +252,12 @@ class XWindow extends XBaseWindow implements X11ComponentPeer {
         params.putIfNull(COLORMAP, gData.get_awt_cmap());
         params.putIfNull(DEPTH, gData.get_awt_depth());
         params.putIfNull(VISUAL_CLASS, Integer.valueOf(XConstants.InputOutput));
-        
-        
 
         // System.out.println("preInit XWindow before: params.get(VISUAL) = " + params.get(VISUAL));
 
         // System.out.println("preInit XWindow: XVisualInfo visualid before put map = ");// + visInfo.get_visualid());
         // Long visual1 = (Long)visInfo.get_visual();
         // XGetVisualIdNative(visual1.longValue());
-
 
         params.putIfNull(VISUAL, visInfo.get_visual());
 
@@ -301,7 +306,7 @@ class XWindow extends XBaseWindow implements X11ComponentPeer {
         // System.out.println("preInit XWindow END: params.get(VISUAL) = " + visual);
         // XGetVisualIdNative(visual.longValue());
 
-        System.out.println("END preInit XWindow");
+        System.out.println("XWindow preInit() END");
     }
 
     void postInit(XCreateWindowParams params) {
