@@ -30,6 +30,8 @@ import sun.util.logging.PlatformLogger;
 
 abstract class XWrapperBase {
     static final PlatformLogger log = PlatformLogger.getLogger("sun.awt.X11.wrappers");
+    
+    private static native void XGetVisualNative(long visual);
 
     public String toString() {
         String ret = "";
@@ -48,8 +50,19 @@ abstract class XWrapperBase {
     }
     public void zero() {
         log.finest("Cleaning memory");
+        System.out.println("XWrapperBase zero()");
         if (getPData() != 0) {
+            var pData = getPData();
+            var vis = Native.getLong(pData+0);
+            System.out.println("XWrapperBase zero(): before setMemory visual = ");
+            XGetVisualNative(vis);
+
             XlibWrapper.unsafe.setMemory(getPData(), (long)getDataSize(), (byte)0);
+
+            var pData2 = getPData();
+            var vis2 = Native.getLong(pData2+0);
+            System.out.println("XWrapperBase zero(): after setMemory visual = ");
+            XGetVisualNative(vis2);
         }
     }
     public abstract int getDataSize();
