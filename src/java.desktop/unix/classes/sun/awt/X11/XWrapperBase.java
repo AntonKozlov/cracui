@@ -52,17 +52,19 @@ abstract class XWrapperBase {
         log.finest("Cleaning memory");
         System.out.println("XWrapperBase zero()");
         if (getPData() != 0) {
-            var pData = getPData();
-            var vis = Native.getLong(pData+0);
-            System.out.println("XWrapperBase zero(): before setMemory visual = ");
-            XGetVisualNative(vis);
+            // var pData = getPData();
+            // var vis = Native.getLong(pData+0);
+            // var visualId = Native.getLong(pData+8);
+            // System.out.println("XWrapperBase zero(): before setMemory visualId = " + visualId);
+            // XGetVisualNative(vis);
 
             XlibWrapper.unsafe.setMemory(getPData(), (long)getDataSize(), (byte)0);
 
-            var pData2 = getPData();
-            var vis2 = Native.getLong(pData2+0);
-            System.out.println("XWrapperBase zero(): after setMemory visual = ");
-            XGetVisualNative(vis2);
+            // var pData2 = getPData();
+            // var vis2 = Native.getLong(pData2+0);
+            // var visualId2 = Native.getLong(pData2+8);
+            // System.out.println("XWrapperBase zero(): after setMemory visualId = " + visualId2);
+            // XGetVisualNative(vis2);
         }
     }
     public abstract int getDataSize();
