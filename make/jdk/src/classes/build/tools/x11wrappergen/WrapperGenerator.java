@@ -797,8 +797,13 @@ public class WrapperGenerator {
                 } else {
                     acc_size_32 += elemSize_32;
                     acc_size_64 += elemSize_64;
-                    pw.println(pref + tp.getJavaType() + " get_" +name +
+                    if (stp.getJavaClassName().contains("AwtGraphics") && name.contains("visInfo")) {
+                        pw.println(pref + tp.getJavaType() + " get_" +name +
+                               "() { "+s_log+" visualInfo = "+tp.getJavaResult(stp.getOffset(tp), null)+"; " + "return " + tp.getJavaResult(stp.getOffset(tp), null) + "; }");
+                    } else {
+                        pw.println(pref + tp.getJavaType() + " get_" +name +
                                "() { "+s_log+"return " + tp.getJavaResult(stp.getOffset(tp), null) + "; }");
+                    }
                     if (type != AtomicType.TYPE_STRUCT) {
                         pw.println(MessageFormat.format(pref + "void set_{0}({1} v) '{' {3} {2}; '}'",
                                                         new Object[] {name, jt, tp.getJavaConversion("pData+"+stp.getOffset(tp), "v"), s_log}));
@@ -861,6 +866,9 @@ public class WrapperGenerator {
                 if (!stp.getIsInterface()) {
                     pw.println("\tprivate Unsafe unsafe = XlibWrapper.unsafe; ");
                     pw.println("\tprivate final boolean should_free_memory;");
+                    if (stp.getJavaClassName().contains("AwtGraphics")) {
+                        pw.println("\tpublic XVisualInfo visualInfo;");
+                    }
                     pw.println("\tpublic static int getSize() { return " + stp.getSize() + "; }");
                     pw.println("\tpublic int getDataSize() { return getSize(); }");
                     pw.println("\n\tlong pData;");
