@@ -213,6 +213,7 @@ class XWindow extends XBaseWindow implements X11ComponentPeer {
         System.out.println("XWindow initGraphicsConfiguration(): graphicsConfig.getVisual() = " + graphicsConfig.getVisual());
 
         graphicsConfigData = new AwtGraphicsConfigData(graphicsConfig.getAData());
+        System.out.println("XWindow initGraphicsConfiguration(): graphicsConfigData AwtGraphicsConfigData " + "id = " + graphicsConfigData.getId() + "; " + "pData = " + graphicsConfigData.getPData());
         System.out.println("XWindow initGraphicsConfiguration(): graphicsConfigData = " + graphicsConfigData);
         var vis = graphicsConfigData.get_awt_visInfo();
         XGetVisualIdNative(((Long)vis.get_visual()).longValue());
