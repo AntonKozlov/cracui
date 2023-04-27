@@ -789,7 +789,11 @@ public class WrapperGenerator {
                                              tp.getJavaResult("index*" + elemSize, "Native.getLong(pData+"+stp.getOffset(tp)+")"),
                                              s_log
                                              }));
-                    pw.println(pref + "long get_" +name+ "() { "+s_log+"return Native.getLong(pData+"+stp.getOffset(tp)+"); }");
+                    if (stp.getJavaClassName().contains("XVisualInf") && name.contains("visual")) {
+                        pw.println(pref + "long get_" +name+ "() { "+s_log+"visId = get_visualid(); "+"return Native.getLong(pData+"+stp.getOffset(tp)+"); }");
+                    } else {
+                        pw.println(pref + "long get_" +name+ "() { "+s_log+"return Native.getLong(pData+"+stp.getOffset(tp)+"); }");
+                    }
                     pw.println(MessageFormat.format(pref + "void set_{0}({1} v) '{' {3} {2}; '}'",
                                                     new Object[] {name, "long", "Native.putLong(pData + " + stp.getOffset(tp) + ", v)", s_log}));
                     acc_size_32 += elemSize_32;
@@ -864,7 +868,7 @@ public class WrapperGenerator {
                 }
                 pw.println(" { ");
                 if (!stp.getIsInterface()) {
-                    if (stp.getJavaClassName().contains("AwtGraphics")) {
+                    if (stp.getJavaClassName().contains("AwtGraphics") || stp.getJavaClassName().contains("XVisualInf")) {
                         pw.println("\tpublic static int i = 0;");
                     }
                     pw.println("\tprivate Unsafe unsafe = XlibWrapper.unsafe; ");
@@ -872,9 +876,12 @@ public class WrapperGenerator {
                     if (stp.getJavaClassName().contains("AwtGraphics")) {
                         pw.println("\tpublic XVisualInfo visualInfo;");
                     }
-                    if (stp.getJavaClassName().contains("AwtGraphics")) {
+                    if (stp.getJavaClassName().contains("AwtGraphics") || stp.getJavaClassName().contains("XVisualInf")) {
                         pw.println("\tpublic int id;");
                         pw.println("\n\tpublic int getId() { return id; }");
+                    }
+                    if (stp.getJavaClassName().contains("XVisualInf")) {
+                        pw.println("\tpublic long visId;");
                     }
                     pw.println("\tpublic static int getSize() { return " + stp.getSize() + "; }");
                     pw.println("\tpublic int getDataSize() { return getSize(); }");
@@ -887,7 +894,7 @@ public class WrapperGenerator {
                     }
                     pw.println("\t\tpData=addr;");
                     pw.println("\t\tshould_free_memory = false;");
-                    if (stp.getJavaClassName().contains("AwtGraphics")) {
+                    if (stp.getJavaClassName().contains("AwtGraphics") || stp.getJavaClassName().contains("XVisualInf")) {
                         pw.println("\t\tid = i;");
                         pw.println("\t\ti = i + 1;");
                     }
@@ -898,7 +905,7 @@ public class WrapperGenerator {
                     }
                     pw.println("\t\tpData = unsafe.allocateMemory(getSize());");
                     pw.println("\t\tshould_free_memory = true;");
-                    if (stp.getJavaClassName().contains("AwtGraphics")) {
+                    if (stp.getJavaClassName().contains("AwtGraphics") || stp.getJavaClassName().contains("XVisualInf")) {
                         pw.println("\t\tid = i;");
                         pw.println("\t\ti = i + 1;");
                     }
@@ -908,15 +915,15 @@ public class WrapperGenerator {
                     if (generateLog) {
                         pw.println("\t\tlog.finest(\"Disposing\");");
                     }
-                    if (stp.getJavaClassName().contains("AwtGraphics")) {
+                    if (stp.getJavaClassName().contains("AwtGraphics") || stp.getJavaClassName().contains("XVisualInf")) {
                         pw.println("\t\ti = 100;");
                     }
                     pw.println("\t\tif (should_free_memory) {");
                     if (generateLog) {
                         pw.println("\t\t\tlog.finest(\"freeing memory\");");
                     }
-                    if (stp.getJavaClassName().contains("AwtGraphics")) {
-                        pw.println("\t\t\ti = 0;");
+                    if (stp.getJavaClassName().contains("AwtGraphics") || stp.getJavaClassName().contains("XVisualInf")) {
+                        pw.println("\t\t\ti = 1000;");
                     }
                     pw.println("\t\t\tunsafe.freeMemory(pData); \n\t}");
                     pw.println("\t\t}");
