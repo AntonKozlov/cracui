@@ -908,9 +908,15 @@ public class WrapperGenerator {
                     if (generateLog) {
                         pw.println("\t\tlog.finest(\"Disposing\");");
                     }
+                    if (stp.getJavaClassName().contains("AwtGraphics")) {
+                        pw.println("\t\ti = 100;");
+                    }
                     pw.println("\t\tif (should_free_memory) {");
                     if (generateLog) {
                         pw.println("\t\t\tlog.finest(\"freeing memory\");");
+                    }
+                    if (stp.getJavaClassName().contains("AwtGraphics")) {
+                        pw.println("\t\t\ti = 0;");
                     }
                     pw.println("\t\t\tunsafe.freeMemory(pData); \n\t}");
                     pw.println("\t\t}");
