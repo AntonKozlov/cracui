@@ -799,7 +799,7 @@ public class WrapperGenerator {
                     acc_size_64 += elemSize_64;
                     if (stp.getJavaClassName().contains("AwtGraphics") && name.contains("visInfo")) {
                         pw.println(pref + tp.getJavaType() + " get_" +name +
-                               "() { "+s_log+" visualInfo = "+tp.getJavaResult(stp.getOffset(tp), null)+"; " + "return " + tp.getJavaResult(stp.getOffset(tp), null) + "; }");
+                               "() { "+s_log+" visualInfo = "+tp.getJavaResult(stp.getOffset(tp), null)+"; " + "return visualInfo" + "; }");
                     } else {
                         pw.println(pref + tp.getJavaType() + " get_" +name +
                                "() { "+s_log+"return " + tp.getJavaResult(stp.getOffset(tp), null) + "; }");
