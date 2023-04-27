@@ -864,10 +864,17 @@ public class WrapperGenerator {
                 }
                 pw.println(" { ");
                 if (!stp.getIsInterface()) {
+                    if (stp.getJavaClassName().contains("AwtGraphics")) {
+                        pw.println("\tpublic static int i = 0;");
+                    }
                     pw.println("\tprivate Unsafe unsafe = XlibWrapper.unsafe; ");
                     pw.println("\tprivate final boolean should_free_memory;");
                     if (stp.getJavaClassName().contains("AwtGraphics")) {
                         pw.println("\tpublic XVisualInfo visualInfo;");
+                    }
+                    if (stp.getJavaClassName().contains("AwtGraphics")) {
+                        pw.println("\tpublic int id;");
+                        pw.println("\n\tpublic int getId() { return id; }");
                     }
                     pw.println("\tpublic static int getSize() { return " + stp.getSize() + "; }");
                     pw.println("\tpublic int getDataSize() { return getSize(); }");
@@ -880,6 +887,10 @@ public class WrapperGenerator {
                     }
                     pw.println("\t\tpData=addr;");
                     pw.println("\t\tshould_free_memory = false;");
+                    if (stp.getJavaClassName().contains("AwtGraphics")) {
+                        pw.println("\t\tid = i;");
+                        pw.println("\t\ti = i + 1;");
+                    }
                     pw.println("\t}");
                     pw.println("\n\n\tpublic " + stp.getJavaClassName() + "() {");
                     if (generateLog) {
@@ -887,6 +898,10 @@ public class WrapperGenerator {
                     }
                     pw.println("\t\tpData = unsafe.allocateMemory(getSize());");
                     pw.println("\t\tshould_free_memory = true;");
+                    if (stp.getJavaClassName().contains("AwtGraphics")) {
+                        pw.println("\t\tid = i;");
+                        pw.println("\t\ti = i + 1;");
+                    }
                     pw.println("\t}");
 
                     pw.println("\n\n\tpublic void dispose() {");
