@@ -1360,14 +1360,17 @@ public class XComponentPeer extends XWindow implements ComponentPeer, DropTarget
     }
 
     public boolean updateGraphicsData(GraphicsConfiguration gc) {
+        System.out.println("XComponentPeer.java updateGraphicsData(gc)");
         int oldVisual = -1, newVisual = -1;
 
         if (graphicsConfig != null) {
             oldVisual = graphicsConfig.getVisual();
         }
+        System.out.println("XComponentPeer.java oldvisual = " + oldVisual);
         if (gc != null && gc instanceof X11GraphicsConfig) {
             newVisual = ((X11GraphicsConfig)gc).getVisual();
         }
+        System.out.println("XComponentPeer.java newVisual = " + newVisual);
 
         // If the new visual differs from the old one, the peer must be
         // recreated because X11 does not allow changing the visual on the fly.
@@ -1377,6 +1380,7 @@ public class XComponentPeer extends XWindow implements ComponentPeer, DropTarget
             return true;
         }
 
+        System.out.println("XComponentPeer.java before initGraphicsConfiguration()");
         initGraphicsConfiguration();
         doValidateSurface();
         return false;

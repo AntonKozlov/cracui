@@ -122,6 +122,7 @@ public class X11GraphicsConfig extends GraphicsConfiguration
         this.doubleBuffer = doubleBuffer;
         this.depth = depth;
         this.colormap = colormap;
+        System.out.println("X11GraphicsConfig constructor before native init(): visualnum = " + visualnum + "; screen() = " + device.getScreen());
         init (visualnum, device.getScreen());
 
         // add a record to the Disposer so that we destroy the native

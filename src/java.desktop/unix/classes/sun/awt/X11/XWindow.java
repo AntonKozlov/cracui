@@ -168,15 +168,23 @@ class XWindow extends XBaseWindow implements X11ComponentPeer {
 
     XWindow(XCreateWindowParams params) {
         super(params);
+        // System.out.println("XWindow constructor 1. params = " + params);
+        // System.out.println("StackTrace:");
+        // StackTraceElement[] stackTraceElements = Thread.currentThread().getStackTrace();
+        // for (int i = 0; i < stackTraceElements.length; i++) {
+        //     System.out.println(stackTraceElements[i]);
+        // }
     }
 
     XWindow() {
+        System.out.println("XWindow constructor 2 empty");
     }
 
     XWindow(long parentWindow, Rectangle bounds) {
         super(new XCreateWindowParams(new Object[] {
             BOUNDS, bounds,
             PARENT_WINDOW, Long.valueOf(parentWindow)}));
+        System.out.println("XWindow constructor 3");
     }
 
     XWindow(Component target, long parentWindow, Rectangle bounds) {
@@ -184,18 +192,27 @@ class XWindow extends XBaseWindow implements X11ComponentPeer {
             BOUNDS, bounds,
             PARENT_WINDOW, Long.valueOf(parentWindow),
             TARGET, target}));
+        // System.out.println("XWindow constructor 4 target = " + target);
+        // System.out.println("StackTrace:");
+        // StackTraceElement[] stackTraceElements = Thread.currentThread().getStackTrace();
+        // for (int i = 0; i < stackTraceElements.length; i++) {
+        //     System.out.println(stackTraceElements[i]);
+        // }
     }
 
     XWindow(Component target, long parentWindow) {
         this(target, parentWindow, new Rectangle(target.getBounds()));
+        System.out.println("XWindow constructor 5");
     }
 
     XWindow(Component target) {
         this(target, (target.getParent() == null) ? 0 : getParentWindowID(target), new Rectangle(target.getBounds()));
+        System.out.println("XWindow constructor 6");
     }
 
     XWindow(Object target) {
         this(null, 0, null);
+        System.out.println("XWindow constructor 7");
     }
 
     /* This create is used by the XEmbeddedFramePeer since it has to create the window
@@ -205,9 +222,11 @@ class XWindow extends XBaseWindow implements X11ComponentPeer {
             PARENT_WINDOW, Long.valueOf(parentWindow),
             REPARENTED, Boolean.TRUE,
             EMBEDDED, Boolean.TRUE}));
+        System.out.println("XWindow constructor 8");
     }
 
     protected void initGraphicsConfiguration() {
+        System.out.println("XWindow initGraphicsConfiguration(): target = " + target + "; dropTarget = " + target.getDropTarget());
         graphicsConfig = (X11GraphicsConfig) target.getGraphicsConfiguration();
         System.out.println("XWindow initGraphicsConfiguration(): graphicsConfig = " + graphicsConfig);
         System.out.println("XWindow initGraphicsConfiguration(): graphicsConfig.getVisual() = " + graphicsConfig.getVisual());
@@ -1468,6 +1487,7 @@ class XWindow extends XBaseWindow implements X11ComponentPeer {
     }
 
     public void dispose() {
+        System.out.println("XWindow dispose()");
         SurfaceData oldData = surfaceData;
         surfaceData = null;
         if (oldData != null) {
