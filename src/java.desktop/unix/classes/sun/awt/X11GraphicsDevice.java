@@ -75,7 +75,13 @@ public final class X11GraphicsDevice extends GraphicsDevice
     }
 
     public void beforeCheckpoint() throws Exception {
-        defaultConfig = null;
+        if (configs == null) {
+            defaultConfig = null;
+        } else {
+            for (int i = 0; i < configs.length; i++) {
+                configs[i] = null;
+            }
+        }
     }
 
     public void afterRestore() throws Exception {

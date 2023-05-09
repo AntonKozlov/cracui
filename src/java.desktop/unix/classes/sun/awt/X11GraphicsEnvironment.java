@@ -57,7 +57,11 @@ import sun.java2d.xr.XRSurfaceData;
 public final class X11GraphicsEnvironment extends SunGraphicsEnvironment {
 
     protected void beforeCheckpoint() throws Exception {
-        ((X11GraphicsDevice)getDefaultScreenDevice()).beforeCheckpoint();
+        // Deinitialize GraphicsConfigurations
+        GraphicsDevice[] graphicsDevices = getScreenDevices();
+        for (int i = 0; i < graphicsDevices.length; i++) {
+            ((X11GraphicsDevice)graphicsDevices[i]).beforeCheckpoint();
+        }
 
         // Deinitialize AWT and X11
         AWTAccessor.getXToolkitAccessor().beforeCheckpoint();
@@ -81,7 +85,11 @@ public final class X11GraphicsEnvironment extends SunGraphicsEnvironment {
         // Initialize X11 and AWT
         AWTAccessor.getXToolkitAccessor().afterRestore();
 
-        ((X11GraphicsDevice)getDefaultScreenDevice()).afterRestore();
+        // Initialize GraphicsConfigurations
+        GraphicsDevice[] graphicsDevices = getScreenDevices();
+        for (int i = 0; i < graphicsDevices.length; i++) {
+            ((X11GraphicsDevice)graphicsDevices[i]).afterRestore();
+        }
     }
 
     private static native void beforeCheckpointNative();
