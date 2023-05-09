@@ -39,6 +39,7 @@ public class XRGraphicsConfig extends X11GraphicsConfig implements
     private XRGraphicsConfig(X11GraphicsDevice device, int visualnum,
             int depth, int colormap, boolean doubleBuffer) {
         super(device, visualnum, depth, colormap, doubleBuffer);
+        System.out.println("XRGraphicsConfig constructor after create X11GC" + "; aData = " + getAData());
     }
 
     public SurfaceData createSurfaceData(X11ComponentPeer peer) {
@@ -50,6 +51,12 @@ public class XRGraphicsConfig extends X11GraphicsConfig implements
         if (!X11GraphicsEnvironment.isXRenderAvailable()) {
             return null;
         }
+
+        // System.out.println("XRGraphicsConfig getConfig(). visualnum = " + visualnum);
+        // StackTraceElement[] stackTraceElements = Thread.currentThread().getStackTrace();
+        // for (int i = 0; i < stackTraceElements.length; i++) {
+        //     System.out.println(stackTraceElements[i]);
+        // }
 
         return new XRGraphicsConfig(device, visualnum, depth, colormap,
                 doubleBuffer);

@@ -74,6 +74,13 @@ public final class X11GraphicsDevice extends GraphicsDevice
         this.scale = initScaleFactor();
     }
 
+    // public void beforeCheckpoint() throws Exception {
+    //     defaultConfig = null;
+    // }
+
+    // public void afterRestore() throws Exception {
+    // }
+
     /**
      * Returns the X11 screen of the device.
      */
@@ -237,7 +244,13 @@ public final class X11GraphicsDevice extends GraphicsDevice
      */
     @Override
     public GraphicsConfiguration getDefaultConfiguration() {
+        System.out.println("X11GraphicsDevice getDefaultConfiguration()");
+        // StackTraceElement[] stackTraceElements = Thread.currentThread().getStackTrace();
+        // for (int i = 0; i < stackTraceElements.length; i++) {
+        //     System.out.println(stackTraceElements[i]);
+        // }
         if (defaultConfig == null) {
+            System.out.println("X11GraphicsDevice defaultConfig == NULL");
             synchronized (configLock) {
                 makeDefaultConfiguration();
             }
@@ -247,6 +260,7 @@ public final class X11GraphicsDevice extends GraphicsDevice
 
     private void makeDefaultConfiguration() {
         if (defaultConfig == null) {
+            System.out.println("X11GraphicsDevice makeDefaultConfiguration defaultConfig == NULL");
             int visNum = getConfigVisualId(0, screen);
             if (X11GraphicsEnvironment.isGLXAvailable()) {
                 defaultConfig = GLXGraphicsConfig.getConfig(this, visNum);
@@ -274,10 +288,12 @@ public final class X11GraphicsDevice extends GraphicsDevice
                     if (X11GraphicsEnvironment.isXRenderVerbose()) {
                         System.out.println("XRender pipeline enabled");
                     }
+                    System.out.println("X11GraphicsDevice makeDefaultConfiguration() defaultConfig = XRGraphicsConfig");
                     defaultConfig = XRGraphicsConfig.getConfig(this, visNum,
                             depth, getConfigColormap(0, screen),
                             doubleBuffer);
                 } else {
+                    // System.out.println("X11GraphicsDevice makeDefaultConfiguration() defaultConfig = X11GraphicsConfig");
                     defaultConfig = X11GraphicsConfig.getConfig(this, visNum,
                                         depth, getConfigColormap(0, screen),
                                         doubleBuffer);
