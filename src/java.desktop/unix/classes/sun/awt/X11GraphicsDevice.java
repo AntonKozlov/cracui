@@ -74,12 +74,12 @@ public final class X11GraphicsDevice extends GraphicsDevice
         this.scale = initScaleFactor();
     }
 
-    // public void beforeCheckpoint() throws Exception {
-    //     defaultConfig = null;
-    // }
+    public void beforeCheckpoint() throws Exception {
+        defaultConfig = null;
+    }
 
-    // public void afterRestore() throws Exception {
-    // }
+    public void afterRestore() throws Exception {
+    }
 
     /**
      * Returns the X11 screen of the device.
