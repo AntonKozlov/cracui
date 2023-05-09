@@ -122,11 +122,13 @@ public class X11GraphicsConfig extends GraphicsConfiguration
         this.doubleBuffer = doubleBuffer;
         this.depth = depth;
         this.colormap = colormap;
+        System.out.println("X11GraphicsConfig constructor before native init(): visualnum = " + visualnum + "; screen() = " + device.getScreen());
         init (visualnum, device.getScreen());
 
         // add a record to the Disposer so that we destroy the native
         // AwtGraphicsConfigData when this object goes away (i.e. after a
         // display change event)
+        System.out.println("X11GraphicsConfig constructor: visualId = " + getVisual() + "; aData = " + getAData() + " add to the Disposer");
         long x11CfgData = getAData();
         Disposer.addRecord(disposerReferent,
                            new X11GCDisposerRecord(x11CfgData));
@@ -370,6 +372,7 @@ public class X11GraphicsConfig extends GraphicsConfiguration
         @Override
         public synchronized void dispose() {
             if (x11ConfigData != 0L) {
+                System.out.println("X11GraphicsConfig class, X11GCDisposerRecord dispose()");
                 X11GraphicsConfig.dispose(x11ConfigData);
                 x11ConfigData = 0L;
             }

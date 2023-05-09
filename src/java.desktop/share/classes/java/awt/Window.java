@@ -486,6 +486,7 @@ public class Window extends Container implements Accessible {
     }
 
     private GraphicsConfiguration initGC(GraphicsConfiguration gc) {
+        System.out.println("Window initGC");
         GraphicsEnvironment.checkHeadless();
 
         if (gc == null) {
@@ -3223,6 +3224,7 @@ public class Window extends Container implements Accessible {
         }
         synchronized (getTreeLock()) {
             super.setGraphicsConfiguration(gc);
+            System.out.println("Window.setGraphicsConfiguration(): new GC is \n+ " + getGraphicsConfiguration_NoClientCode() + "\n+ this is " + this);
             if (log.isLoggable(PlatformLogger.Level.FINER)) {
                 log.finer("+ Window.setGraphicsConfiguration(): new GC is \n+ " + getGraphicsConfiguration_NoClientCode() + "\n+ this is " + this);
             }

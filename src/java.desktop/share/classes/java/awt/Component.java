@@ -1163,6 +1163,7 @@ public abstract class Component implements ImageObserver, MenuContainer,
     }
 
     void setGraphicsConfiguration(GraphicsConfiguration gc) {
+        System.out.println("Component.java setGraphicsConfiguration gc = " + gc);
         synchronized(getTreeLock()) {
             if (updateGraphicsData(gc)) {
                 removeNotify();
@@ -1192,14 +1193,18 @@ public abstract class Component implements ImageObserver, MenuContainer,
     private boolean updateSelfGraphicsData(GraphicsConfiguration gc) {
         checkTreeLock();
         if (graphicsConfig == gc) {
+            System.out.println("Component.java updateSelfGraphicsData(gs) case graphicsConfig == gc");
             return false;
         }
+        System.out.println("Component.java updateSelfGraphicsData(gs) case graphicsConfig != gc. gc = " + gc + "; graphicsConfig = " + graphicsConfig);
         graphicsConfig = gc;
 
         ComponentPeer peer = this.peer;
         if (peer != null) {
+            System.out.println("Component.java updateSelfGraphicsData(gs) case peer != null");
             return peer.updateGraphicsData(gc);
         }
+        System.out.println("Component.java updateSelfGraphicsData(gs) case peer == null. finish");
         return false;
     }
 
